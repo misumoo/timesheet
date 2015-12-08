@@ -1,0 +1,85 @@
+<div ng-controller="HomeController" ng-init="setup()" xmlns="http://www.w3.org/1999/html">
+  <div class="changelog-header">Changelog</div>
+  <br />
+
+  <div>
+    <span class="changelog-day">Known bugs</span>
+    <ul class="changelog-entry">
+      <li>After login, top right section (Please login) does not update to "Welcome, name"</li>
+      <li>Sometimes lines will appear between each td on timesheet, most of the time not..</li>
+    </ul>
+  </div>
+
+  <div>
+    <span class="changelog-day">Known tasks(database)</span><br />
+    <form ng-submit="addNewTask()">
+      <table class="simple">
+        <tr>
+          <td><textarea style="width: 355px;" name="taskdescription" ng-model="taskdescription"></textarea></td>
+          <td><button type="submit" name="addtask" title="Add A New Task" class="tsbutton"><i class="fa fa-plus"></i></button></td>
+        </tr>
+      </table>
+    </form>
+    <ul class="changelog-entry">
+      <li ng-repeat="x in tasks">
+        {{x.TaskDescription}}
+      </li>
+    </ul>
+  </div>
+
+  <div>
+    <span class="changelog-day">August 31, 2015</span>
+    <ul class="changelog-entry">
+      <li>User passwords are now hashed and salted. Old passwords removed.</li>
+      <li>Registering works with new password scheme.</li>
+    </ul>
+  </div>
+
+  <div>
+    <span class="changelog-day">August 28, 2015</span>
+    <ul class="changelog-entry">
+      <li>Save, Reset - disabled unless dirty.</li>
+      <li>Save - sets pristine, disabling button.</li>
+      <li>Delete - Enables/disables properly on new rows.</li>
+      <li>Styling timesheet.</li>
+      <li>Before exiting the page or changing the date, a check is set to see if any save buttons are enabled. Popup appears if there are.</li>
+      <li>If hitting no on datepicker alert, the date is set back to currently selected week and nothing happens.</li>
+      <li>Tasks now db driven. Able to be appended.</li>
+    </ul>
+  </div>
+
+  <div>
+    <span class="changelog-day">August 26, 2015</span>
+    <ul class="changelog-entry">
+      <li>Deploy to Creative Webworks.</li>
+      <li>Match both databases so I can do use wamp and not have to upload after every change.</li>
+      <li>If not logged in, timesheet will kick to login page.</li>
+      <li>Pretty up home page, play with colors.</li>
+      <li>Add known bugs/tasks.</li>
+      <li>Grey dotted outline that appears on buttons in the header removed.</li>
+    </ul>
+  </div>
+
+  <div>
+    <span class="changelog-day">August 25, 2015</span>
+    <ul class="changelog-entry">
+      <li>Registration now works.</li>
+      <li>Changed icons for each timesheet row, save reload and delete.</li>
+      <li>Styling timesheet.</li>
+    </ul>
+  </div>
+
+  <div>
+    <span class="changelog-day">August 24, 2015</span>
+    <ul class="changelog-entry">
+      <li>Added a Home page.</li>
+      <li>When on a page, the navigation lights up correctly.</li>
+      <li>Saving a customer and service are now just strings. Once skills are a bit better with angular, change to an auto complete.</li>
+      <li>Saving a row now checks to see if any fields are dirty. If dirty, it will save.</li>
+      <li>After saving is done, the row returns to a pristine state.</li>
+      <li>Adding a new row now inserts a record on save.</li>
+      <li>Cleaned up code.</li>
+      <li>Logging in now shows username on top right, login if not logged in.</li>
+    </ul>
+  </div>
+</div>

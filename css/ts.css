@@ -1,0 +1,280 @@
+@import url(http://fonts.googleapis.com/css?family=Ubuntu:400,500,700,300);
+
+body {
+  font-family: "Ubuntu", "Sans-serif";
+  font-weight: 400;
+  font-em: 2;
+  position: relative;
+}
+
+#page {
+  border-right: 1px solid #999;
+  border-left: 1px solid #999;
+  border-bottom: 1px solid #999;
+  height: 100%;
+  background-color: #fcfbf4;
+  padding-bottom: 6px;
+}
+
+.navbar, #navbar-container .active a, .modal-header, .fancygrid th { /*override bootstrap a, apply to modal header as well to give it the website theme*/
+  background: #6ce0f7; /* Old browsers */
+  background: -moz-linear-gradient(top,  #6ce0f7 0%, #00c1fc 99%); /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#6ce0f7), color-stop(99%,#00c1fc)); /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(top,  #6ce0f7 0%,#00c1fc 99%); /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(top,  #6ce0f7 0%,#00c1fc 99%); /* Opera 11.10+ */
+  background: -ms-linear-gradient(top,  #6ce0f7 0%,#00c1fc 99%); /* IE10+ */
+  background: linear-gradient(to bottom,  #6ce0f7 0%,#00c1fc 99%); /* W3C */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#6ce0f7', endColorstr='#00c1fc',GradientType=0 ); /* IE6-9 */
+}
+
+#navbar-container a:hover { /*override bootstrap a hover*/
+  background: #42d9ed; /* Old browsers */
+  background: -moz-linear-gradient(top,  #42d9ed 0%, #4cadf7 100%); /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#42d9ed), color-stop(100%,#4cadf7)); /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(top,  #42d9ed 0%,#4cadf7 100%); /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(top,  #42d9ed 0%,#4cadf7 100%); /* Opera 11.10+ */
+  background: -ms-linear-gradient(top,  #42d9ed 0%,#4cadf7 100%); /* IE10+ */
+  background: linear-gradient(to bottom,  #42d9ed 0%,#4cadf7 100%); /* W3C */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#42d9ed', endColorstr='#4cadf7',GradientType=0 ); /* IE6-9 */
+}
+
+.navbar {
+  margin-bottom: 0;
+}
+
+#navbar-container .active a, .modal-header { /*override bootstrap a, apply to modal header as well to give it the website theme*/
+  margin-bottom: 0;
+  font-weight: 500;
+  color: #000;
+}
+
+.customnav > li:first-child {
+  border-left: 1px solid #999;
+}
+
+.customnav > li {
+  border-right: 1px solid #999;
+  float: left !important;
+  height: 50px;
+  line-height: 50px;
+  padding: 0;
+  position: relative;
+  outline: none;
+}
+
+.customnav > li > a, .navbar-header > a {
+  outline: none;
+}
+
+#navright {
+  line-height: 14px;
+}
+
+.login {
+  width: 300px;
+  margin: auto;
+}
+
+.loginform input {
+  width: 100%;
+  margin-bottom: 6px;
+}
+
+.center {
+  text-align: center;
+}
+
+.margcenter {
+  margin: auto;
+}
+
+.error {
+  color: red;
+  font-weight: 700;
+}
+
+.shadowbox {
+  box-shadow: 0 0 8px rgba(36,47,199,1), 0 0 12px rgba(36,47,199,1) inset;
+  background: none repeat scroll 0 0 #3498db;
+  border-color: #FD8;
+  color: #FFF;
+  padding: 8px;
+  margin-bottom: 5px;
+  border-radius: 5px;
+}
+
+.fancyinput, .autocomplete input {
+  display: block;
+  margin: 0;
+  width: 100%;
+  padding: 4px;
+  border: solid 1px #dcdcdc;
+  transition: box-shadow 0.2s, border 0.2s;
+  outline: none;
+}
+
+.fancyinput:focus, .autocomplete input:focus {
+  border: solid 1px #4A76B8;
+  box-shadow: 0 0 3px 1px #4A76B8;
+}
+
+.datepicker {
+  width: 130px;
+}
+
+.datepicker p ul {
+  width: 280px;
+}
+
+.addButton {
+  width: 30px;
+  height: 30px;
+  float: left;
+  margin: 6px;
+}
+
+.addButton:hover {
+  cursor: pointer;
+}
+
+.addHeader {
+  font-size: 16px;
+  margin-bottom: 4px;
+}
+
+.clrb {
+  clear: both;
+}
+
+.inputwrapper {
+  margin: 6px 0px;
+  width: 300px;
+  float: left;
+}
+
+.inputwrapper input {
+  width: 100%;
+}
+
+.cf {
+  overflow: auto;
+}
+
+.changelog-header {
+  font-size: 1.8em;
+  color: #0c005e;
+}
+.changelog-day {
+  font-size: 1.25em;
+  color: #0c005e;
+}
+.changelog-entry>li {
+  color: #0c008f;
+}
+
+.tsbutton {
+  width: 35px;
+}
+
+.simple td {
+  vertical-align: top;
+}
+/******************************************************************/
+/**************************FANCY BUTTON****************************/
+/******************************************************************/
+.fancybutton {
+  background: rgba(61, 176, 255, 0.15);
+  border: 1px solid transparent;
+  border-radius: 4px;
+  cursor: pointer;
+  display: inline-block;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.42857;
+  margin-bottom: 0;
+  padding: 6px 12px;
+  text-align: center;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.fancybutton:hover {
+  background: rgba(61, 176, 255, 0.33);
+  text-decoration: none;
+}
+
+.fancybutton.disabled, .fancybutton[disabled], fieldset[disabled] .fancybutton {
+  box-shadow: none;
+  cursor: not-allowed;
+  opacity: 0.25;
+  pointer-events: none;
+}
+/******************************************************************/
+/**************************FANCY BUTTON****************************/
+/******************************************************************/
+
+/******************************************************************/
+/****************************FANCY GRID****************************/
+/******************************************************************/
+.fancygrid {
+  -moz-border-bottom-colors: none;
+  -moz-border-left-colors: none;
+  -moz-border-right-colors: none;
+  -moz-border-top-colors: none;
+  border-collapse: collapse;
+  border-image: none;
+  border: 1px inset black;
+  border-bottom-color: -moz-use-text-color;
+  font-size: 0.96em;
+  width: 100%;
+  background-color: #fffef7;
+}
+
+.fancygrid tr {
+  border-bottom: 1px solid darkgray;
+}
+
+.fancygrid th {
+  border: 1px inset gray;
+  font-size: 1.1em;
+  font-weight: bold;
+  text-align: center;
+}
+
+.fancygrid tr td {
+  vertical-align: top;
+  padding: 3px;
+  border: 0;
+}
+
+.fancygrid tr td input {
+  width: 100%;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.fancygrid tr td textarea {
+  width: 100%;
+  resize: vertical;
+}
+
+.fancygrid tr th:nth-child(1), .fancygrid tr th:nth-child(2) {
+  width: 160px;
+}
+
+.fancygrid tr th:nth-child(3) {
+  width: 300px;
+}
+
+.fancygrid tr th:nth-child(n+4):nth-child(-n+12) {
+  width: 40px;
+}
+
+.fancygrid tr td:nth-child(12) {
+  padding-top: 2px;
+  text-align: center;
+}
+/******************************************************************/
+/****************************FANCY GRID****************************/
+/******************************************************************/

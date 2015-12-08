@@ -1,0 +1,172 @@
+<div class="mainsheet" ng-controller="SheetController" ng-init="setup()">
+
+  <form name="timesheet">
+    <div class="inputwrapper" style="width: 100%;">
+      <section style="margin: auto;">
+        <div>
+          <div class="datepicker">
+            <p class="input-group">
+              <input type="text" class="form-control fancyinput"
+                     datepicker-popup="{{format}}" ng-model="dt" is-open="opened" datepicker-options="dateOptions"
+                     date-disabled="disabled(date, mode)" show-button-bar="false" ng-required="true" close-text="Close" ng-change="getTimes()" />
+              <span class="input-group-btn">
+                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+              </span>
+            </p>
+          </div> <!-- datepicker -->
+        </div> <!-- DatePickerController -->
+      </section>
+      <section>
+        <table class="fancygrid">
+          <thead>
+            <tr>
+              <th>Customer</th>
+              <th>Service/item</th>
+              <th>Description</th>
+              <th>M<br />{{DateM}}</th>
+              <th>Tu<br />{{DateTu}}</th>
+              <th>W<br />{{DateW}}</th>
+              <th>Th<br />{{DateTh}}</th>
+              <th>F<br />{{DateF}}</th>
+              <th>Sa<br />{{DateSa}}</th>
+              <th>Su<br />{{DateSu}}</th>
+              <th>Total</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-form="weekly_{{$index}}" ng-keypress="trigger($index)" ng-repeat="x in times">
+              <td><input name="iCust" ng-model="x.Customer" class="fancyinput" wid="{{x.WeeklyID}}" data-old-value="{{x.Customer}}" value="{{x.Customer}}" customer></td>
+              <td><input name="iService" ng-model="x.Service" class="fancyinput" placeholder="..." wid="{{x.WeeklyID}}" service /></td>
+              <td><textarea name="ta_Desc" ng-model="x.Description" class="fancyinput" wid="{{x.WeeklyID}}" data-old-value="{{x.Description}}" description>{{x.Description}}</textarea></td>
+              <td><input name="iM" ng-model="x.M" class="fancyinput" placeholder="0.00" tid="{{x.MTimeID}}" wid="{{x.WeeklyID}}" resourcedate="{{DateMFull}}" data-old-value="{{x.M}}" value="{{x.M}}" time></td>
+              <td><input name="iTu" ng-model="x.Tu" class="fancyinput" placeholder="0.00" tid="{{x.TuTimeID}}" wid="{{x.WeeklyID}}" resourcedate="{{DateTuFull}}" data-old-value="{{x.Tu}}" value="{{x.Tu}}" time></td>
+              <td><input name="iW" ng-model="x.W" class="fancyinput" placeholder="0.00" tid="{{x.WTimeID}}" wid="{{x.WeeklyID}}" resourcedate="{{DateWFull}}" data-old-value="{{x.W}}" value="{{x.W}}" time></td>
+              <td><input name="iTh" ng-model="x.Th" class="fancyinput" placeholder="0.00" tid="{{x.ThTimeID}}" wid="{{x.WeeklyID}}" resourcedate="{{DateThFull}}" data-old-value="{{x.Th}}" value="{{x.Th}}" time></td>
+              <td><input name="iF" ng-model="x.F" class="fancyinput" placeholder="0.00" tid="{{x.FTimeID}}" wid="{{x.WeeklyID}}" resourcedate="{{DateFFull}}" data-old-value="{{x.F}}" value="{{x.F}}" time></td>
+              <td><input name="iSa" ng-model="x.Sa" class="fancyinput" placeholder="0.00" tid="{{x.SaTimeID}}" wid="{{x.WeeklyID}}" resourcedate="{{DateSaFull}}" data-old-value="{{x.Sa}}" value="{{x.Sa}}" time></td>
+              <td><input name="iSu" ng-model="x.Su" class="fancyinput" placeholder="0.00" tid="{{x.SuTimeID}}" wid="{{x.WeeklyID}}" resourcedate="{{DateSuFull}}" data-old-value="{{x.Su}}" value="{{x.Su}}" time></td>
+              <td><span ng-model="x.Sum"></span></td>
+              <td>
+                <button class="tsbutton" ng-disabled="weekly_{{$index}}.$pristine" name="save" title="Save" ng-click="saveRow($index)"><i class="fa fa-floppy-o"></i></button>
+                <button class="tsbutton" ng-disabled="weekly_{{$index}}.$pristine" name="reset" title="Reset" ng-click="resetForm($index)"><i class="fa fa-repeat"></i></button>
+                <button class="tsbutton" ng-disabled="weekly_{{$index}}.WeeklyID.$modelValue < 1" name="delete" title="Delete" ng-click="deleteRow($index)"><i class="fa fa-trash"></i></button>
+                <div id="weekly_{{$index}}_hidables" style="display: none;">
+                  <input name="WeeklyID" ng-model="x.WeeklyID" />
+                </div>
+              </td>
+            </tr> <!-- weekly_{{$index}} -->
+          </tbody>
+        </table>
+      </section>
+    </div>
+
+    <!--<div class="inputwrapper">-->
+      <!--<span class="fancyinput">Add a row!</span>-->
+    <!--</div>-->
+    <!--<button class="addButton"ng-click="addnewrow()">+</button>-->
+    <!--<div class="clrb"></div>-->
+
+    <div ng-click="toggleModal()" role="button" class="btn btn-default" modalShow>Add a row</div>
+
+    <div modal-show="showDialog" class="modal fade">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title">Time Sheet Entry</h4>
+          </div>
+          <div class="modal-body">
+
+            <div class="row">
+              <div class="col-lg-4">
+                <label for="dateAdd">Date:</label>
+                <div ng-model="dateAdd" class="datepicker" id="dateAdd">
+                  <p class="input-group">
+                    <input type="text" class="form-control fancyinput"
+                           datepicker-popup="{{format}}" ng-model="dtAdd" is-open="openedAdd" datepicker-options="dateOptions"
+                           date-disabled="disabled(date, mode)" show-button-bar="false" ng-required="true" close-text="Close" ng-change="getTimes()" />
+                    <span class="input-group-btn">
+                      <button type="button" class="btn btn-default" ng-click="openAdd($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+                    </span>
+                  </p>
+                </div> <!-- datepicker -->
+              </div>
+              <div class="col-lg-4">
+                <div class="form-group">
+                  <label for="projectAdd">Project:</label>
+                  <select ng-model="projectAdd" class="form-control" id="projectAdd">
+                    <option>PIP</option>
+                    <option>ObviO</option>
+                    <option>BIC</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-lg-4">
+                <label for="hoursAdd">Hours:</label>
+                <input ng-model="hoursAdd" type="text" class="form-control" id="hoursAdd" />
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-lg-12">
+                <label for="descAdd">Description:</label>
+                <textarea ng-model="descAdd" class="form-control" rows="5" id="descAdd"></textarea>
+              </div>
+            </div>
+
+
+          </div>
+          <div class="modal-footer">
+            <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+            <button ng-click="test()" class="btn btn-primary">Save</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div>
+
+    <!--<a ng-click="test()" role="button" class="btn btn-default" data-toggle="modal">Launch demo modal</a>-->
+
+    <!--<div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">-->
+      <!--<div class="modal-dialog">-->
+        <!--<div class="modal-content">-->
+          <!--<div class="modal-header">-->
+            <!--<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>-->
+            <!--<h3 id="myModalLabel">Time Sheet Entry</h3>-->
+          <!--</div>-->
+          <!--<div class="modal-body">-->
+
+            <!--<div class="row">-->
+              <!--<div class="col-lg-4">-->
+                <!--<label for="datepicker">Date:</label>-->
+                <!--<input type="text" name="selected_date" id="datepicker"/>-->
+              <!--</div>-->
+              <!--<div class="col-lg-4">-->
+                <!--<div class="form-group">-->
+                  <!--<label for="sel1">Project:</label>-->
+                  <!--<select class="form-control" id="sel1">-->
+                    <!--<option>PIP</option>-->
+                    <!--<option>ObviO</option>-->
+                    <!--<option>BIC</option>-->
+                  <!--</select>-->
+                <!--</div>-->
+              <!--</div>-->
+              <!--<div class="col-lg-4">-->
+                <!--<label for="hours">Hours:</label>-->
+                <!--<input type="text" class="form-control" id="hours">-->
+              <!--</div>-->
+            <!--</div>-->
+
+            <!--<textarea class="form-control" rows="5" id="comment"></textarea>-->
+
+          <!--</div>-->
+          <!--<div class="modal-footer">-->
+            <!--<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>-->
+            <!--<button class="btn btn-primary">Save changes</button>-->
+          <!--</div>-->
+        <!--</div>-->
+      <!--</div>-->
+    <!--</div>-->
+
+  </form>
+
+</div>
