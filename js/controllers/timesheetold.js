@@ -193,13 +193,14 @@ tsApp.controller('SheetControllerOld', [ '$scope', '$cookies', '$http', '$filter
 
     $scope.saveRow = function(index) {
       weeklyid = $scope.times[index].WeeklyID;
+      weeklyid = typeof weeklyid !== 'undefined' ?  weeklyid : "";
       insert = (weeklyid == "");
+
+      console.log(weeklyid);
       if(insert) {
         //we need to get a weekly id first, then come back around and rerun this with the weeklyid
         $scope.getNewWeeklyID(index);
       } else {
-        //not inserting, update our row on everything that is dirty
-        $scope.timesheet['weekly_' + index].$setPristine();
         $scope.trigger();
 
         ($scope.timesheet['weekly_' + index].iCust.$dirty ? $scope.saveCustomer($scope.times[index].Customer, $scope.times[index].WeeklyID, index) : "");
@@ -212,6 +213,9 @@ tsApp.controller('SheetControllerOld', [ '$scope', '$cookies', '$http', '$filter
         ($scope.timesheet['weekly_' + index].iF.$dirty ? $scope.saveTime($scope.times[index].F, $scope.DateFFull, $scope.times[index].WeeklyID, $scope.times[index].FTimeID, index, "f") : "");
         ($scope.timesheet['weekly_' + index].iSa.$dirty ? $scope.saveTime($scope.times[index].Sa, $scope.DateSaFull, $scope.times[index].WeeklyID, $scope.times[index].SaTimeID, index, "sa") : "");
         ($scope.timesheet['weekly_' + index].iSu.$dirty ? $scope.saveTime($scope.times[index].Su, $scope.DateSuFull, $scope.times[index].WeeklyID, $scope.times[index].SuTimeID, index, "su") : "");
+
+        //not inserting, update our row on everything that is dirty
+        $scope.timesheet['weekly_' + index].$setPristine();
       }
     }; //saveRow
 
@@ -235,6 +239,7 @@ tsApp.controller('SheetControllerOld', [ '$scope', '$cookies', '$http', '$filter
     }; //saveDesc
 
     $scope.saveCustomer = function(customer, weeklyid, index) {
+      console.log("saveCustomer");
       customer = typeof customer !== 'undefined' ? customer : "";
       weeklyid = typeof weeklyid !== 'undefined' ? weeklyid : "";
       $http.post(serviceBase, {
