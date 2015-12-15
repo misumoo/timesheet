@@ -1,0 +1,27 @@
+<section class="login">
+  <form class="loginform" name="resetform" novalidate
+        ng-submit="reset()">
+
+    <div class="alertmsg shadowbox center">Reset Password</div>
+
+    <input class="login-input" type="email" name="email" placeholder="Email"
+           ng-model="user.email" ng-required="true">
+    <p class="error"
+       ng-show="registerform.email.$invalid && registerform.email.$touched">
+      Must be valid email.
+    </p>
+
+    <input class="login-input" type="password" name="password" placeholder="Password"
+           ng-model="user.password" ng-required="true">
+    <p class="error"
+       ng-show="registerform.password.$invalid && registerform.password.$touched">
+      Must be valid password.
+    </p>
+
+    <div class="margcenter center">
+      <button type="submit" class="btn"
+              ng-disabled="resetform.$invalid">Register</button>
+      <p class="center">or <a href="#/login">Login</a></p>
+    </div>
+  </form>
+</section>

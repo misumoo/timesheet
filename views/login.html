@@ -1,26 +1,18 @@
 <section class="login">
   <form class="loginform" name="loginform" novalidate
-    ng-submit="login()">
+        ng-submit="login()">
 
     <div class="alertmsg shadowbox center">Login</div>
 
-    <input class="fancyinput" type="email" name="email" placeholder="Email"
-      ng-model="user.email" ng-required="true">
-    <p class="error"
-      ng-show="loginform.email.$invalid && loginform.email.$touched">
-      Must be valid email.
-    </p>
+    <input class="login-input" type="email" name="email" placeholder="Email"
+           ng-model="user.email" ng-required="true">
 
-    <input class="fancyinput" type="password" name="password" placeholder="Password"
-      ng-model="user.password" ng-required="true">
-    <p class="error"
-      ng-show="loginform.password.$invalid && loginform.password.$touched">
-      Must be valid password.
-    </p>
+    <input class="login-input" type="password" name="password" placeholder="Password"
+           ng-model="user.password" ng-required="true">
 
     <div class="margcenter center">
-      <button type="submit" class="fancybutton"
-        ng-disabled="loginform.$invalid">Login</button>
+      <button type="submit" class="btn"
+              ng-disabled="loginform.$invalid">Login</button>
       <p class="center">or <a href="#/register">Register</a></p>
     </div>
   </form>
