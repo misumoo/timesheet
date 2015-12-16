@@ -76,6 +76,12 @@ if($task == "register") {
   echo $data;
 } //task register
 
+if($task == "resetInit") {
+  $email = $request->email;
+  $data = resetInit($email);
+  echo $data;
+} //task resetInit
+
 if($task == "saveSingle") {
   $amount = $request->amount;
   $weeklyid = $request->weeklyid;
@@ -284,6 +290,11 @@ function timeControl($weeklyid, $userid, $date, $hours, $timeid) {
   $data = array("message" => $timetask, "id" => $insertid);
   return json_encode($data);
 } //timeControl
+
+function resetInit($email) {
+  $data =  array("success" => true);
+  return json_encode($data);
+} //login
 
 function register($firstname, $lastname, $email, $userpass) {
   $success = true;

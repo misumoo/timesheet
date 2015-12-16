@@ -5,15 +5,16 @@
     <div class="alertmsg shadowbox center">Login</div>
 
     <input class="login-input" type="email" name="email" placeholder="Email"
-           ng-model="user.email" ng-required="true">
+           ng-model="email" ng-required="true">
 
     <input class="login-input" type="password" name="password" placeholder="Password"
-           ng-model="user.password" ng-required="true">
+           ng-model="password" ng-required="true">
 
     <div class="margcenter center">
       <button type="submit" class="btn"
               ng-disabled="loginform.$invalid">Login</button>
-      <p class="center">or <a href="#/register">Register</a></p>
+      <div class="center">or <a href="#/register">Register</a></div>
+      <div class="center"><a href="#/reset">Forgot password?</a></div>
     </div>
   </form>
 </section>

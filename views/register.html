@@ -5,28 +5,28 @@
     <div class="alertmsg shadowbox center">Register</div>
 
     <input class="login-input" type="firstname" name="firstname" placeholder="First Name"
-       ng-model="user.firstname" ng-required="true">
+       ng-model="firstname" ng-required="true">
     <p class="error"
        ng-show="registerform.firstname.$invalid && registerform.firstname.$touched">
       Must have a first name
     </p>
 
     <input class="login-input" type="lastname" name="lastname" placeholder="Last Name"
-       ng-model="user.lastname" ng-required="true">
+       ng-model="lastname" ng-required="true">
     <p class="error"
        ng-show="registerform.lastname.$invalid && registerform.lastname.$touched">
-      Must have a first name
+      Must have a last name
     </p>
 
     <input class="login-input" type="email" name="email" placeholder="Email"
-       ng-model="user.email" ng-required="true">
+       ng-model="email" ng-required="true">
     <p class="error"
        ng-show="registerform.email.$invalid && registerform.email.$touched">
       Must be valid email.
     </p>
 
     <input class="login-input" type="password" name="password" placeholder="Password"
-       ng-model="user.password" ng-required="true">
+       ng-model="password" ng-required="true">
     <p class="error"
        ng-show="registerform.password.$invalid && registerform.password.$touched">
       Must be valid password.

@@ -16,6 +16,14 @@ tsApp.config(['$routeProvider', function($routeProvider) {
       templateUrl: 'views/register.html',
       controller:  'RegisterController'
     }).
+    when('/reset', {
+      templateUrl: 'views/reset.html',
+      controller:  'RegisterController'
+    }).
+    when('/resetdo/:email', {
+      templateUrl: 'views/resetdo.html',
+      controller:  'RegisterController'
+    }).
     when('/timesheet', {
       templateUrl: 'views/timesheet.html',
       controller: 'SheetController'

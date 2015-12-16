@@ -1,20 +1,22 @@
 <section class="login">
-  <form class="loginform" name="resetform" novalidate
-        ng-submit="resetInit()">
+  <form class="loginform" name="resetdoform" novalidate
+        ng-submit="resetDo()">
 
     <div class="alertmsg shadowbox center">Reset Password</div>
 
     <input class="login-input" type="email" name="email" placeholder="Email"
            ng-model="email" ng-required="true">
     <p class="error"
-       ng-show="resetform.email.$invalid && resetform.email.$touched">
+       ng-show="resetdoform.email.$invalid && resetdoform.email.$touched">
       Must be valid email.
     </p>
 
+    <input class="login-input" type="password" name="password" placeholder="Password"
+           ng-model="password" ng-required="true">
+
     <div class="margcenter center">
       <button type="submit" class="btn"
-              ng-disabled="resetform.$invalid">Send code</button>
-      <p class="center">or <a href="#/login">Login</a></p>
+              ng-disabled="resetdoform.$invalid">Confirm</button>
     </div>
   </form>
 </section>
