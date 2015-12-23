@@ -5,7 +5,7 @@
 tsApp.controller('SheetController', [ '$scope', '$cookies', '$http', '$filter', '$sce', '$location', '$timeout',
   function($scope, $cookies, $http, $filter, $sce, $location, $timeout) {
 
-    var serviceBase = 'views/_handle.php';
+    var serviceBase = 'lib/_handle.php';
 
     $scope.$on('$locationChangeStart', function( event, newUrl, oldUrl ) {
       if($scope.ReadyToLeave == false && $scope.ReadyToLeave !== 'undefined') {

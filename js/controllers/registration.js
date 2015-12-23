@@ -4,15 +4,10 @@
 
 tsApp.controller('RegisterController', ['$scope', '$cookies', '$http', '$location', '$routeParams',
   function($scope, $cookies, $http, $location, $routeParams) {
-    var serviceBase = 'views/_handle.php';
+    var serviceBase = 'lib/_handle.php';
 
     var email = $routeParams.email;
     (email != "" && email != undefined ? $scope.email = email : "");
-
-    $scope.test = function() {
-      $cookies.fruit = 'Apple';
-      $scope.myFruit = $cookies['fruit'];
-    };
 
     $scope.resetInit = function() {
       $http.post(serviceBase, {
@@ -22,7 +17,7 @@ tsApp.controller('RegisterController', ['$scope', '$cookies', '$http', '$locatio
         if(response.success == true) {
           $location.path('/resetdo/' + $scope.email);
         } else {
-          alert("Invalid username/password");
+          alert("Unknown Error");
         }
       }).error(function() {
         alert("Error reaching server");
@@ -30,8 +25,20 @@ tsApp.controller('RegisterController', ['$scope', '$cookies', '$http', '$locatio
     }; //resetInit
 
     $scope.resetDo = function() {
-      console.log($scope.email);
-      console.log($scope.password);
+      $http.post(serviceBase, {
+        email: $scope.email,
+        confirmationcode: $scope.confirmationcode,
+        password: $scope.password,
+        task: "resetDo"
+      }).success(function(response) {
+        if(response.success == true) {
+          $location.path('/login');
+        } else {
+          alert("Error occured. Please try again.");
+        }
+      }).error(function() {
+        alert("Error reaching server");
+      });
     };
 
     $scope.login = function() { //our submit button has been triggered -- form with ng-submit="login()"

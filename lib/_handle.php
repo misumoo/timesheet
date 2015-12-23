@@ -11,13 +11,15 @@ session_start();
 class db {
   const dbserver = "localhost";
   const dbuser = 'creatkd5_chris';
-  const dbpass = 'nq#0&mvRlTb;';
+  const dbpass = 'HdzGdhXjTNSJ6WS3';
   const dbname = 'creatkd5_tspro';
 }
 class userInfo {
   public $userfirstname;
   public $usertoken;
 }
+
+require 'phpmailer/PHPMailerAutoload.php';
 
 (isset($_COOKIE['usertoken']) ? $usertoken = $_COOKIE['usertoken'] : $usertoken = "");
 $userid = getUserIDFromToken($usertoken);
@@ -28,7 +30,7 @@ $task = $request->task;
 //first thing before we perform anything is to make sure our user is actually in the database
 if(!$userid || $usertoken == "") { // no id is bound to this token
   //as a non logged in user, our only tasks can be login and register
-  if($task != "login" && $task != "register") {
+  if($task != "login" && $task != "register" && $task != "resetDo" && $task != "resetInit") {
     $task = "";
     $data = array("success" => false, "message" => "No userid or token");
     echo json_encode($data);
@@ -60,7 +62,7 @@ if($task == "login") {
   $data = login($username, $userpass);
 
   if(!$data) {
-    $data = array("success" => false);
+    $data = json_encode(array("success" => false));
   } else {
     $data = login($username, $userpass);
   }
@@ -75,6 +77,21 @@ if($task == "register") {
   $data = register($firstname, $lastname, $email, $userpass);
   echo $data;
 } //task register
+
+if($task == "resetInit") {
+  $email = $request->email;
+  $data = resetInit($email);
+  echo $data;
+} //task resetInit
+
+if($task == "resetDo") {
+  $email = $request->email;
+  $confirmationcode = $request->confirmationcode;
+  $password = $request->password;
+  $data = resetDo($email, $confirmationcode, $password);
+  echo $data;
+} //task resetInit
+
 
 if($task == "saveSingle") {
   $amount = $request->amount;
@@ -285,6 +302,111 @@ function timeControl($weeklyid, $userid, $date, $hours, $timeid) {
   return json_encode($data);
 } //timeControl
 
+function resetInit($email) {
+  $success = true;
+  $msg = "";
+  $name = "TODO";
+  $resetcode = strtoupper(bin2hex(openssl_random_pseudo_bytes(4)));
+
+  $sql = "UPDATE tbl_users_reset SET Expired = 1 WHERE Email = ".convertForInsert($email).";
+          INSERT INTO tbl_users_reset
+          (ResetID, Email, ResetTimeStamp, IPAddress, ResetCode) VALUES
+          (NULL, ".convertForInsert($email).", NULL, ".convertForInsert($_SERVER['REMOTE_ADDR']).", ".convertForInsert($resetcode).")";
+  $mysqli = new mysqli(db::dbserver, db::dbuser, db::dbpass, db::dbname);
+
+  $mysqli->multi_query($sql);
+
+  $useremail = $email;
+
+  $mailsubject = "Code for resetting your password.";
+  $mailfooter = "
+    <p>
+      Footer TODO
+    </p>
+  ";
+  $mailbody = '
+    <html>
+      <body>
+        <span style="font-family: Calibri; font-size: 15px;">
+          Hello '.$name.',<br />
+          <br />
+          Your reset code is: <b>'.$resetcode.'</b><br />
+          '.$mailfooter.'
+        </span>
+      </body>
+    </html>
+  ';
+
+  $mail = new PHPMailer;
+  //$mail->SMTPDebug = 3;                     // Enable verbose debug output
+  //$mail->SMTPDebug = 1;
+
+  $mail->isSMTP();                          // Set mailer to use SMTP
+//  $mail->Mailer = 'smtp';
+//  $mail->Host = 'smtp.gmail.com';           // Specify main and backup SMTP servers
+//  $mail->SMTPAuth = true;                   // Enable SMTP authentication
+//  $mail->Username = 'tsprodb@gmail.com';    // SMTP username
+//  $mail->Password = 'tr[]pp@3!!a';          // SMTP password
+//  $mail->SMTPSecure = 'tls';                // Enable TLS encryption, `ssl` also accepted
+//  $mail->Port = 587;                        // TCP port to connect to
+
+  $mail->SetFrom('tsprodb@gmail.com', 'Timesheet');
+
+  $mail->From = 'tsprodb@gmail.com';
+  $mail->FromName = 'Timesheet';
+
+  $mail->addAddress($useremail, '');        // Add a recipient
+  $mail->Subject  = $mailsubject;
+  $mail->Body     = $mailbody;
+  $mail->AltBody  = 'Please use a service that will view emails as HTML.';
+
+  if(!$mail->send()) {
+    $success = false;
+    $msg = $mail->ErrorInfo;
+  }
+
+  $data =  array("success" => $success, "message" => $msg);
+  return json_encode($data);
+} //login
+
+function resetDo($email, $confirmationcode, $password) {
+  $success = true;
+  $msg = "";
+  $userid = "";
+  $reset = false;
+
+  $sql = "SELECT * FROM tbl_users_reset WHERE Email = ".convertForInsert($email)." AND Expired = '0'";
+  $mysqli = new mysqli(db::dbserver, db::dbuser, db::dbpass, db::dbname);
+  $rs = $mysqli->query($sql);
+  while($row = $rs->fetch_assoc()) {
+    if($row['ResetCode'] == trim($confirmationcode)) {
+      $reset = true;
+    }
+  }
+
+  if($reset) {
+    $sql = "SELECT UserID FROM tbl_users WHERE Email = ".convertForInsert($email);
+    $mysqli = new mysqli(db::dbserver, db::dbuser, db::dbpass, db::dbname);
+    $rs = $mysqli->query($sql);
+    while($row = $rs->fetch_assoc()) {
+      $userid = $row['UserID'];
+    }
+    if($userid != "") {
+      $salt = generateSalt($userid);
+      $salted = encryptPassword($password, $salt);
+      updatePassword($salted, $userid);
+      $sql = "UPDATE tbl_users_reset SET Expired = 1 WHERE Email = ".convertForInsert($email);
+      $mysqli->query($sql);
+    }
+  } else {
+    $success = false;
+    $msg = "Code or email was incorrect.";
+  }
+
+  $data =  array("success" => $success, "message" => $msg);
+  return json_encode($data);
+}
+
 function register($firstname, $lastname, $email, $userpass) {
   $success = true;
   $msg = "";
@@ -342,6 +464,7 @@ function login($username, $userpass) {
   if($username == "" || $userpass == "") {
     return false;
   }
+  $salt = "";
 
   $sql = "SELECT Salt, UserID FROM tbl_users WHERE Email = ".convertForInsert($username);
   $mysqli = new mysqli(db::dbserver, db::dbuser, db::dbpass, db::dbname);
@@ -391,7 +514,7 @@ function getServices($userid) {
 
   $data = array("message" => "", "services" => $data, "success" => true);
   return json_encode($data);
-} //getCustomers
+} //getServices
 
 function getCustomers($userid) {
   $data = "";
@@ -412,9 +535,6 @@ function getCustomers($userid) {
 } //getCustomers
 
 function getNewWeeklyID($userid) {
-  $response = "";
-  $insertid = "";
-
   $userid = convertForInsert($userid);
 
   $sql = "INSERT INTO `tbl_timesheet` (WeeklyID, UserID) VALUES (NULL, ".$userid.");";
@@ -427,7 +547,7 @@ function getNewWeeklyID($userid) {
 
   $data = array("message" => "", "weeklyid" => $insertid, "success" => true);
   return json_encode($data);
-} //addCustomer
+} //getNewWeeklyID
 
 function addCustomer($userid, $customername) {
   $response = "";

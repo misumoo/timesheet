@@ -11,7 +11,10 @@
       Must be valid email.
     </p>
 
-    <input class="login-input" type="password" name="password" placeholder="Password"
+    <input class="login-input" type="text" name="confirmationcode" placeholder="Confirmation Code"
+           ng-model="confirmationcode" ng-required="true">
+
+    <input class="login-input" type="password" name="password" placeholder="New Password"
            ng-model="password" ng-required="true">
 
     <div class="margcenter center">
