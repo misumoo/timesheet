@@ -2,6 +2,57 @@
 
   <form name="timesheet">
     <div class="inputwrapper" style="width: 100%;">
+
+      <section style="width: 400px;" ng-form="InsertNewRecord">
+        <div class="row">
+          <div class="col-lg-4">
+            <label for="dateAdd">Date:</label>
+            <div ng-model="dateAdd" class="datepicker" id="dateAdd">
+              <p class="input-group">
+                <input type="text" class="form-control fancyinput"
+                       datepicker-popup="{{format}}" ng-model="dtAdd" is-open="openedAdd" datepicker-options="dateOptions"
+                       date-disabled="disabled(date, mode)" show-button-bar="false" ng-required="true" close-text="Close" ng-change="getTimes()" />
+                    <span class="input-group-btn">
+                      <button type="button" class="btn btn-default" ng-click="openAdd($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+                    </span>
+              </p>
+            </div> <!-- datepicker -->
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-4">
+            <div class="form-group">
+              <label for="add_Customer">Customer:</label>
+              <select id="add_Customer" ng-model="add_Customer" class="form-control">
+                <option ng-repeat="x in customers" value="{{x.CustomerID}}">{{x.CustomerName}}</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <div class="form-group">
+              <label for="add_Service">Service:</label>
+              <select id="add_Service" ng-model="add_Service" class="form-control">
+                <option ng-repeat="x in services" value="{{x.ServiceID}}">{{x.ServiceName}}</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <label for="hoursAdd">Hours:</label>
+            <input ng-model="hoursAdd" type="text" class="form-control" id="hoursAdd" />
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-12">
+            <label for="descAdd">Description:</label>
+            <textarea ng-model="descAdd" class="form-control" rows="5" id="descAdd"></textarea>
+          </div>
+        </div>
+        <div class="row right btnsave">
+          <button ng-click="insertNewRow()" class="btn" ng-disabled="InsertNewRecord.$pristine">Add New Record</button>
+        </div>
+        <div class="clrb spacer"></div>
+      </section>
+
       <section style="margin: auto;">
         <div>
           <div class="datepicker">
@@ -16,6 +67,7 @@
           </div> <!-- datepicker -->
         </div> <!-- DatePickerController -->
       </section>
+
       <section>
         <table class="fancygrid">
           <thead>
@@ -61,68 +113,62 @@
       </section>
     </div>
 
-    <!--<div class="inputwrapper">-->
-      <!--<span class="fancyinput">Add a row!</span>-->
+    <!--<div ng-click="toggleModal()" role="button" class="btn btn-default" modalShow>Add a row</div> -->
+
+    <!--<div modal-show="showDialog" class="modal fade">-->
+      <!--<div class="modal-dialog">-->
+        <!--<div class="modal-content">-->
+          <!--<div class="modal-header">-->
+            <!--<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>-->
+            <!--<h4 class="modal-title">Time Sheet Entry</h4>-->
+          <!--</div>-->
+          <!--<div class="modal-body">-->
+
+            <!--<div class="row">-->
+              <!--<div class="col-lg-4">-->
+                <!--<label for="dateAdd">Date:</label>-->
+                <!--<div ng-model="dateAdd" class="datepicker" id="dateAdd">-->
+                  <!--<p class="input-group">-->
+                    <!--<input type="text" class="form-control fancyinput"-->
+                           <!--datepicker-popup="{{format}}" ng-model="dtAdd" is-open="openedAdd" datepicker-options="dateOptions"-->
+                           <!--date-disabled="disabled(date, mode)" show-button-bar="false" ng-required="true" close-text="Close" ng-change="getTimes()" />-->
+                    <!--<span class="input-group-btn">-->
+                      <!--<button type="button" class="btn btn-default" ng-click="openAdd($event)"><i class="glyphicon glyphicon-calendar"></i></button>-->
+                    <!--</span>-->
+                  <!--</p>-->
+                <!--</div> &lt;!&ndash; datepicker &ndash;&gt;-->
+              <!--</div>-->
+              <!--<div class="col-lg-4">-->
+                <!--<div class="form-group">-->
+                  <!--<label for="projectAdd">Project:</label>-->
+                  <!--<select ng-model="projectAdd" class="form-control" id="projectAdd">-->
+                    <!--<option>PIP</option>-->
+                    <!--<option>ObviO</option>-->
+                    <!--<option>BIC</option>-->
+                  <!--</select>-->
+                <!--</div>-->
+              <!--</div>-->
+              <!--<div class="col-lg-4">-->
+                <!--<label for="hoursAdd">Hours:</label>-->
+                <!--<input ng-model="hoursAdd" type="text" class="form-control" id="hoursAdd" />-->
+              <!--</div>-->
+            <!--</div>-->
+            <!--<div class="row">-->
+              <!--<div class="col-lg-12">-->
+                <!--<label for="descAdd">Description:</label>-->
+                <!--<textarea ng-model="descAdd" class="form-control" rows="5" id="descAdd"></textarea>-->
+              <!--</div>-->
+            <!--</div>-->
+
+
+          <!--</div>-->
+          <!--<div class="modal-footer">-->
+            <!--<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>-->
+            <!--<button ng-click="test()" class="btn btn-primary">Save</button>-->
+          <!--</div>-->
+        <!--</div>&lt;!&ndash; /.modal-content &ndash;&gt;-->
+      <!--</div>&lt;!&ndash; /.modal-dialog &ndash;&gt;-->
     <!--</div>-->
-    <!--<button class="addButton"ng-click="addnewrow()">+</button>-->
-    <!--<div class="clrb"></div>-->
-
-    <div ng-click="toggleModal()" role="button" class="btn btn-default" modalShow>Add a row</div>
-
-    <div modal-show="showDialog" class="modal fade">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-            <h4 class="modal-title">Time Sheet Entry</h4>
-          </div>
-          <div class="modal-body">
-
-            <div class="row">
-              <div class="col-lg-4">
-                <label for="dateAdd">Date:</label>
-                <div ng-model="dateAdd" class="datepicker" id="dateAdd">
-                  <p class="input-group">
-                    <input type="text" class="form-control fancyinput"
-                           datepicker-popup="{{format}}" ng-model="dtAdd" is-open="openedAdd" datepicker-options="dateOptions"
-                           date-disabled="disabled(date, mode)" show-button-bar="false" ng-required="true" close-text="Close" ng-change="getTimes()" />
-                    <span class="input-group-btn">
-                      <button type="button" class="btn btn-default" ng-click="openAdd($event)"><i class="glyphicon glyphicon-calendar"></i></button>
-                    </span>
-                  </p>
-                </div> <!-- datepicker -->
-              </div>
-              <div class="col-lg-4">
-                <div class="form-group">
-                  <label for="projectAdd">Project:</label>
-                  <select ng-model="projectAdd" class="form-control" id="projectAdd">
-                    <option>PIP</option>
-                    <option>ObviO</option>
-                    <option>BIC</option>
-                  </select>
-                </div>
-              </div>
-              <div class="col-lg-4">
-                <label for="hoursAdd">Hours:</label>
-                <input ng-model="hoursAdd" type="text" class="form-control" id="hoursAdd" />
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-lg-12">
-                <label for="descAdd">Description:</label>
-                <textarea ng-model="descAdd" class="form-control" rows="5" id="descAdd"></textarea>
-              </div>
-            </div>
-
-
-          </div>
-          <div class="modal-footer">
-            <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-            <button ng-click="test()" class="btn btn-primary">Save</button>
-          </div>
-        </div><!-- /.modal-content -->
-      </div><!-- /.modal-dialog -->
-    </div>
 
     <!--<a ng-click="test()" role="button" class="btn btn-default" data-toggle="modal">Launch demo modal</a>-->
 

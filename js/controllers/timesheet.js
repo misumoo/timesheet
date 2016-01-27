@@ -85,7 +85,7 @@ tsApp.controller('SheetController', [ '$scope', '$cookies', '$http', '$filter', 
       $http.post(serviceBase, {
         task: "getCustomers"
       }).success(function(response) {
-        $scope.names = response.records;
+        $scope.customers = response.customers;
       }).error(function() {
         alert("Error retrieving Customers");
       });
@@ -102,6 +102,16 @@ tsApp.controller('SheetController', [ '$scope', '$cookies', '$http', '$filter', 
         alert("Error inserting");
       });
     }; //addCustomer
+
+    $scope.getServices = function() {
+      $http.post(serviceBase, {
+        task: "getServices"
+      }).success(function(response) {
+        $scope.services = response.services;
+      }).error(function() {
+        alert("Error getting services");
+      });
+    }; // getServices
 
     $scope.getTimes = function() {
       var cancelprocess = false;
@@ -151,7 +161,7 @@ tsApp.controller('SheetController', [ '$scope', '$cookies', '$http', '$filter', 
       $scope.getCustomers();
       $scope.getTimes();
       $scope.todayAdd();
-      console.log("test");
+      $scope.getServices();
     }; //setup
 
     $scope.trigger = function(index) {
@@ -203,6 +213,12 @@ tsApp.controller('SheetController', [ '$scope', '$cookies', '$http', '$filter', 
       //console.log($scope.timesheet['weekly_' + index]);
       //console.log(JSON.stringify($scope.timesheet['weekly_' + index]));
     }; //deleteRow
+
+    $scope.insertNewRow = function() {
+      console.log($scope.add_Customer);
+      console.log($scope.add_Service);
+      $scope.timesheet['InsertNewRecord'].$setPristine();
+    }; //insertNewRow
 
     $scope.saveRow = function(index) {
       weeklyid = $scope.times[index].WeeklyID;

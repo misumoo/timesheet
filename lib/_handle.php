@@ -137,7 +137,7 @@ if($task == "lookupService") {
   $service = $request->service;
   $data = lookupService($userid, $service);
   echo $data;
-} //getServices
+} //lookupService
 
 if($task == "getTasks") {
   echo getTasks();
@@ -497,18 +497,20 @@ function login($username, $userpass) {
 
 function getServices($userid) {
   $data = "";
+  $dbdata = "";
 
-  $sql = "SELECT ServiceName FROM tbl_services WHERE UserID = ".$userid;
+  $sql = "SELECT ServiceID, ServiceName FROM tbl_services WHERE UserID = ".$userid;
   $mysqli = new mysqli(db::dbserver, db::dbuser, db::dbpass, db::dbname);
 
   $rs = $mysqli->query($sql);
   while($row = $rs->fetch_assoc()) {
-    //if ($data != "") {$data .= ",";}
-    //$data .= '{"CustomerName":"'  . $row["CustomerName"] . '"}';
+    $dbdata = array(
+      "ServiceID" => $row["ServiceID"],
+      "ServiceName" => $row['ServiceName']
+    );
 
-    $data[] = $row['ServiceName'];
+    $data[] = $dbdata;
   }
-  //$data ='{"records":['.$data.']}';
   $rs->free();
   $mysqli->close();
 
@@ -518,20 +520,25 @@ function getServices($userid) {
 
 function getCustomers($userid) {
   $data = "";
+  $dbdata = "";
 
-  $sql = "SELECT CustomerName FROM tbl_customers WHERE UserID = ".$userid;
+  $sql = "SELECT CustomerID, CustomerName FROM tbl_customers WHERE UserID = ".$userid;
   $mysqli = new mysqli(db::dbserver, db::dbuser, db::dbpass, db::dbname);
 
   $rs = $mysqli->query($sql);
   while($row = $rs->fetch_assoc()) {
-    if ($data != "") {$data .= ",";}
-    $data .= '{"CustomerName":"'  . $row["CustomerName"] . '"}';
+    $dbdata = array(
+      "CustomerID" => $row["CustomerID"],
+      "CustomerName" => $row['CustomerName']
+    );
+
+    $data[] = $dbdata;
   }
-  $data ='{"records":['.$data.']}';
   $rs->free();
   $mysqli->close();
 
-  return $data;
+  $data = array("message" => "", "customers" => $data, "success" => true);
+  return json_encode($data);
 } //getCustomers
 
 function getNewWeeklyID($userid) {
