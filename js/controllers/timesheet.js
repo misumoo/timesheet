@@ -32,7 +32,7 @@ tsApp.controller('SheetController', [ '$scope', '$cookies', '$http', '$filter', 
     };
 
     $scope.todayAdd = function() {
-      $scope.dtAdd = new Date();
+      $scope.add_Date = new Date();
     };
 
     $scope.openAdd = function($event) {
@@ -214,11 +214,41 @@ tsApp.controller('SheetController', [ '$scope', '$cookies', '$http', '$filter', 
       //console.log(JSON.stringify($scope.timesheet['weekly_' + index]));
     }; //deleteRow
 
-    $scope.insertNewRow = function() {
-      console.log($scope.add_Customer);
-      console.log($scope.add_Service);
-      $scope.timesheet['InsertNewRecord'].$setPristine();
-    }; //insertNewRow
+    $scope.insertNewTime = function() {
+      cancelProcess = false;
+
+      customerid = $scope.add_Customer;
+      serviceid = $scope.add_Service;
+      hours = $scope.add_Hours;
+      desc = $scope.add_Desc;
+      date = $filter('date')(new Date($scope.add_Date), $scope.formats[1]);
+
+      (customerid == null ? cancelProcess = true : "");
+      (serviceid == null ? cancelProcess = true : "");
+      (hours == null ? cancelProcess = true : "");
+
+      if(!cancelProcess) {
+        $http.post(serviceBase, {
+          task: "insertNewTime",
+          customerid: customerid,
+          serviceid: serviceid,
+          hours: hours,
+          date: date,
+          desc: desc
+        }).success(function(response) {
+          //success
+          $scope.timesheet['InsertNewRecord'].$setPristine();
+          $scope.add_Hours = null;
+          $scope.add_Desc = null;
+          $scope.getTimes();
+        }).error(function() {
+          alert("Save unsuccessful, please try again.");
+        });
+      } else {
+        alert("Data needs to be filled out in order to insert a new record.");
+      }
+
+    }; //insertNewTime
 
     $scope.saveRow = function(index) {
       weeklyid = $scope.times[index].WeeklyID;

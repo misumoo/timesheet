@@ -6,12 +6,12 @@
       <section style="width: 400px;" ng-form="InsertNewRecord">
         <div class="row">
           <div class="col-lg-4">
-            <label for="dateAdd">Date:</label>
-            <div ng-model="dateAdd" class="datepicker" id="dateAdd">
+            <label for="add_Date">Date:</label>
+            <div ng-model="add_Date" class="datepicker" id="add_Date">
               <p class="input-group">
                 <input type="text" class="form-control fancyinput"
-                       datepicker-popup="{{format}}" ng-model="dtAdd" is-open="openedAdd" datepicker-options="dateOptions"
-                       date-disabled="disabled(date, mode)" show-button-bar="false" ng-required="true" close-text="Close" ng-change="getTimes()" />
+                       datepicker-popup="{{format}}" ng-model="add_Date" is-open="openedAdd" datepicker-options="dateOptions"
+                       date-disabled="disabled(date, mode)" show-button-bar="false" ng-required="true" close-text="Close" ng-change="" />
                     <span class="input-group-btn">
                       <button type="button" class="btn btn-default" ng-click="openAdd($event)"><i class="glyphicon glyphicon-calendar"></i></button>
                     </span>
@@ -37,18 +37,18 @@
             </div>
           </div>
           <div class="col-lg-4">
-            <label for="hoursAdd">Hours:</label>
-            <input ng-model="hoursAdd" type="text" class="form-control" id="hoursAdd" />
+            <label for="add_Hours">Hours:</label>
+            <input ng-model="add_Hours" type="text" class="form-control" id="add_Hours" />
           </div>
         </div>
         <div class="row">
           <div class="col-lg-12">
-            <label for="descAdd">Description:</label>
-            <textarea ng-model="descAdd" class="form-control" rows="5" id="descAdd"></textarea>
+            <label for="add_Desc">Description:</label>
+            <textarea ng-model="add_Desc" class="form-control" rows="5" id="add_Desc"></textarea>
           </div>
         </div>
         <div class="row right btnsave">
-          <button ng-click="insertNewRow()" class="btn" ng-disabled="InsertNewRecord.$pristine">Add New Record</button>
+          <button ng-click="insertNewTime()" class="btn" ng-disabled="InsertNewRecord.$pristine">Add New Record</button>
         </div>
         <div class="clrb spacer"></div>
       </section>

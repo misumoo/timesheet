@@ -43,12 +43,22 @@ if(!$userid || $usertoken == "") { // no id is bound to this token
 #######################################################################################################################
 if($task == "getCustomers") {
   echo getCustomers($userid);
-} //task CustomerName
+} //task getCustomers
 
 if($task == "addCustomer") {
   $customername = $request->customername;
   echo addCustomer($userid, $customername);
-} //task addProject
+} //task addCustomer
+
+if($task == "insertNewTime") {
+  $customerid = $request->customerid;
+  $serviceid = $request->serviceid;
+  $hours = $request->hours;
+  $date = $request->date;
+  $desc = $request->desc;
+  $weeklyid = getNewWeeklyID($userid);
+  echo insertNewTime($userid, $customerid, $serviceid, $hours, $date, $desc, $weeklyid);
+} //task insertNewTime
 
 if($task == "getTimes") {
   $date = $request->date;
@@ -112,20 +122,21 @@ if($task == "saveDescription") {
 if($task == "saveService") {
   $service = $request->service;
   $weeklyid = $request->weeklyid;
-  $data = saveService($service, $weeklyid, $userid);
+  $data = saveService($service, "", $weeklyid, $userid);
   echo $data;
 } //saveService
 
 if($task == "saveCustomer") {
   $customer = $request->customer;
   $weeklyid = $request->weeklyid;
-  $data = saveCustomer($customer, $weeklyid, $userid);
+  $data = saveCustomer($customer, "", $weeklyid, $userid);
   echo $data;
 } //saveCustomer
 
 if($task == "getNewWeeklyID") {
   $data = getNewWeeklyID($userid);
-  echo $data;
+  $data = array("message" => "", "weeklyid" => $data, "success" => true);
+  return json_encode($data);
 } //getNewWeeklyID
 
 if($task == "getServices") {
@@ -201,15 +212,16 @@ function saveDescription($description, $weeklyid, $userid) {
   return json_encode($data);
 } //saveDescription
 
-function saveService($service, $weeklyid, $userid) {
-  $task = "update";
-
+function saveService($service, $serviceid, $weeklyid, $userid) {
   $service = convertForInsert($service);
+  $serviceid = convertForInsert($serviceid);
   $weeklyid = convertForInsert($weeklyid);
   $userid = convertForInsert($userid);
 
-  if($task == "update") {
+  if($serviceid == NULL) {
     $sql = "UPDATE `tbl_timesheet` SET ServiceName = ".$service." WHERE WeeklyID = ".$weeklyid." AND UserID = ".$userid.";";
+  } else {
+    $sql = "UPDATE `tbl_timesheet` SET ServiceID = ".$serviceid." WHERE WeeklyID = ".$weeklyid." AND UserID = ".$userid.";";
   }
 
   $mysqli = new mysqli(db::dbserver, db::dbuser, db::dbpass, db::dbname);
@@ -217,19 +229,20 @@ function saveService($service, $weeklyid, $userid) {
   $mysqli->query($sql);
   $mysqli->close();
 
-  $data = array("message" => $task, "sql" => $sql);
+  $data = array("sql" => $sql);
   return json_encode($data);
 } //saveService
 
-function saveCustomer($customer, $weeklyid, $userid) {
-  $task = "update";
-
+function saveCustomer($customer, $customerid, $weeklyid, $userid) {
   $customer = convertForInsert($customer);
+  $customerid = convertForInsert($customerid);
   $weeklyid = convertForInsert($weeklyid);
   $userid = convertForInsert($userid);
 
-  if($task == "update") {
+  if($customerid == NULL) {
     $sql = "UPDATE `tbl_timesheet` SET CustomerName = ".$customer." WHERE WeeklyID = ".$weeklyid." AND UserID = ".$userid.";";
+  } else {
+    $sql = "UPDATE `tbl_timesheet` SET CustomerID = ".$customerid." WHERE WeeklyID = ".$weeklyid." AND UserID = ".$userid.";";
   }
 
   $mysqli = new mysqli(db::dbserver, db::dbuser, db::dbpass, db::dbname);
@@ -237,7 +250,7 @@ function saveCustomer($customer, $weeklyid, $userid) {
   $mysqli->query($sql);
   $mysqli->close();
 
-  $data = array("message" => $task, "sql" => $sql);
+  $data = array("sql" => $sql);
   return json_encode($data);
 } //saveCustomer
 
@@ -552,8 +565,7 @@ function getNewWeeklyID($userid) {
 
   $mysqli->close();
 
-  $data = array("message" => "", "weeklyid" => $insertid, "success" => true);
-  return json_encode($data);
+  return $insertid;
 } //getNewWeeklyID
 
 function addCustomer($userid, $customername) {
@@ -573,6 +585,28 @@ function addCustomer($userid, $customername) {
 
   return $sql;
 } //addCustomer
+
+function insertNewTime($userid, $customerid, $serviceid, $hours, $date, $desc, $weeklyid) {
+  $savedesc = saveDescription($desc, $weeklyid, $userid);
+  $savecustomer = saveCustomer("", $customerid, $weeklyid, $userid);
+  $saveservice = saveService("", $serviceid, $weeklyid, $userid);
+
+  $userid = convertForInsert($userid);
+  $hours = convertForInsert($hours);
+  $date = convertForInsert($date);
+
+
+  $sql = "INSERT INTO `tbl_time` (TimeID, UserID, Hours, HourDate, WeeklyID) VALUES (NULL, ".$userid.", ".$hours.", ".$date.", ".$weeklyid.");";
+  $mysqli = new mysqli(db::dbserver, db::dbuser, db::dbpass, db::dbname);
+
+  $mysqli->query($sql);
+  $insertid = $mysqli->insert_id;
+
+  $mysqli->close();
+
+  $data = array("inserid" => $insertid, "savecustomer" => $savecustomer, "saveservice" => $saveservice, "savedesc" => $savedesc);
+  return json_encode($data);
+} //insertNewTime
 
 function getTimes($userid, $date) {
   $data = "";
