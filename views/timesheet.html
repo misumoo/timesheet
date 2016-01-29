@@ -23,9 +23,13 @@
           <div class="col-lg-4">
             <div class="form-group">
               <label for="add_Customer">Customer:</label>
-              <select id="add_Customer" ng-model="add_Customer" class="form-control">
+              <select id="add_Customer" ng-model="add_Customer" class="form-control"><!-- TODO: This is not the angular way. The way below is, but for right now I am leaving it. Fix me later. -->
                 <option ng-repeat="x in customers" value="{{x.CustomerID}}">{{x.CustomerName}}</option>
               </select>
+              <!--<select id="add_Customer"-->
+                      <!--ng-model="customers"-->
+                      <!--ng-options="option.CustomerName for option in services track by option.CustomerID"-->
+                      <!--class="form-control"></select>-->
             </div>
           </div>
           <div class="col-lg-4">
