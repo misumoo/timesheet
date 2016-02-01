@@ -41,18 +41,58 @@
             </div>
           </div>
           <div class="col-lg-4">
-            <label for="add_Hours">Hours:</label>
-            <input ng-model="add_Hours" type="text" class="form-control" id="add_Hours" />
+            <div class="form-group">
+              <label for="add_Hours">Hours:</label>
+              <input ng-model="add_Hours" type="text" class="form-control" id="add_Hours" />
+            </div>
           </div>
         </div>
         <div class="row">
           <div class="col-lg-12">
-            <label for="add_Desc">Description:</label>
-            <textarea ng-model="add_Desc" class="form-control" rows="5" id="add_Desc"></textarea>
+            <div class="form-group">
+              <label for="add_Desc">Description:</label>
+              <textarea ng-model="add_Desc" class="form-control" rows="5" id="add_Desc"></textarea>
+            </div>
           </div>
         </div>
         <div class="row right btnsave">
           <button ng-click="insertNewTime()" class="btn" ng-disabled="InsertNewRecord.$pristine">Add New Record</button>
+        </div>
+        <div class="clrb spacer"></div>
+      </section>
+
+      <section style="width: 400px;" ng-form="InsertCustomer">
+        <div class="row">
+          <div class="col-lg-12">
+            <div class="form-group">
+              <label for="customername">Customer:</label>
+              <input id="customername" ng-model="customername" class="fancyinput" />
+            </div>
+          </div>
+        </div>
+        <div class="row right btnsave">
+          <button ng-click="addCustomer()" class="btn" ng-disabled="InsertCustomer.$pristine">Add Customer</button>
+        </div>
+        <div class="clrb spacer"></div>
+      </section>
+
+      <section style="width: 400px;" ng-form="InsertService">
+        <div class="row">
+          <div class="col-lg-8">
+            <div class="form-group">
+              <label for="servicename">Service:</label>
+              <input id="servicename" ng-model="servicename" class="fancyinput" />
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <div class="form-group">
+              <label for="hourlyrate">Hourly Rate:</label>
+              <input id="hourlyrate" ng-model="hourlyrate" class="fancyinput" />
+            </div>
+          </div>
+        </div>
+        <div class="row right btnsave">
+          <button ng-click="addService()" class="btn" ng-disabled="InsertService.$pristine">Add Service</button>
         </div>
         <div class="clrb spacer"></div>
       </section>
@@ -112,6 +152,48 @@
                 </div>
               </td>
             </tr> <!-- weekly_{{$index}} -->
+          </tbody>
+        </table>
+      </section>
+
+      <section style="margin-top: 5px;">
+        <table class="fancygrid">
+          <thead>
+          <tr>
+            <th>Customer</th>
+            <th>Service/item</th>
+            <th>Description</th>
+            <th>M<br />{{DateM}}</th>
+            <th>Tu<br />{{DateTu}}</th>
+            <th>W<br />{{DateW}}</th>
+            <th>Th<br />{{DateTh}}</th>
+            <th>F<br />{{DateF}}</th>
+            <th>Sa<br />{{DateSa}}</th>
+            <th>Su<br />{{DateSu}}</th>
+            <th>Total</th>
+            <th></th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr ng-form="weekly_{{$index}}" ng-keypress="trigger($index)" ng-repeat="x in times">
+            <td><div class="editable" ng-model="x.Customer" wid="{{x.WeeklyID}}" data-old-value="{{x.Customer}}">{{x.Customer}}</div></td>
+            <td><div class="editable" ng-model="x.Service" wid="{{x.WeeklyID}}" data-old-value="{{x.Customer}}">{{x.Service}}</div></td>
+            <td><div class="editable" ng-model="x.Description" wid="{{x.WeeklyID}}" data-old-value="{{x.Customer}}">{{x.Description}}</div></td>
+            <td><div class="editable" ng-model="x.M" wid="{{x.WeeklyID}}" data-old-value="{{x.Customer}}">{{x.M}}</div></td>
+            <td><div class="editable" ng-model="x.Tu" wid="{{x.WeeklyID}}" data-old-value="{{x.Customer}}">{{x.Tu}}</div></td>
+            <td><div class="editable" ng-model="x.W" wid="{{x.WeeklyID}}" data-old-value="{{x.Customer}}">{{x.W}}</div></td>
+            <td><div class="editable" ng-model="x.Th" wid="{{x.WeeklyID}}" data-old-value="{{x.Customer}}">{{x.Th}}</div></td>
+            <td><div class="editable" ng-model="x.F" wid="{{x.WeeklyID}}" data-old-value="{{x.Customer}}">{{x.F}}</div></td>
+            <td><div class="editable" ng-model="x.Sa" wid="{{x.WeeklyID}}" data-old-value="{{x.Customer}}">{{x.Sa}}</div></td>
+            <td><div class="editable" ng-model="x.Su" wid="{{x.WeeklyID}}" data-old-value="{{x.Customer}}">{{x.Su}}</div></td>
+            <td><div ng-model="x.Sum" wid="{{x.WeeklyID}}" data-old-value="{{x.Customer}}">{{x.Sum}}</div></td>
+            <td>
+              <button class="tsbutton" ng-disabled="weekly_{{$index}}.WeeklyID.$modelValue < 1" name="delete" title="Delete" ng-click="deleteRow($index)"><i class="fa fa-trash"></i></button>
+              <div id="weekly_{{$index}}_hidables2" style="display: none;">
+                <input name="WeeklyID" ng-model="x.WeeklyID" />
+              </div>
+            </td>
+          </tr> <!-- weekly_{{$index}} -->
           </tbody>
         </table>
       </section>

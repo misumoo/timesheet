@@ -50,6 +50,12 @@ if($task == "addCustomer") {
   echo addCustomer($userid, $customername);
 } //task addCustomer
 
+if($task == "addService") {
+  $servicename = $request->servicename;
+  $hourlyrate = $request->hourlyrate;
+  echo addService($userid, $servicename, $hourlyrate);
+} //task addService
+
 if($task == "insertNewTime") {
   $customerid = $request->customerid;
   $serviceid = $request->serviceid;
@@ -555,10 +561,11 @@ function getCustomers($userid) {
 } //getCustomers
 
 function getNewWeeklyID($userid) {
+  $mysqli = new mysqli(db::dbserver, db::dbuser, db::dbpass, db::dbname);
+
   $userid = convertForInsert($userid);
 
   $sql = "INSERT INTO `tbl_timesheet` (WeeklyID, UserID) VALUES (NULL, ".$userid.");";
-  $mysqli = new mysqli(db::dbserver, db::dbuser, db::dbpass, db::dbname);
 
   $mysqli->query($sql);
   $insertid = $mysqli->insert_id;
@@ -569,22 +576,37 @@ function getNewWeeklyID($userid) {
 } //getNewWeeklyID
 
 function addCustomer($userid, $customername) {
-  $response = "";
-  $insertid = "";
+  $mysqli = new mysqli(db::dbserver, db::dbuser, db::dbpass, db::dbname);
 
   $userid = convertForInsert($userid);
   $customername = convertForInsert($customername);
 
-  $sql = "INSERT INTO `tbl_customers` (CustomerID, CustomerName, UserID, HourlyRate) VALUES (NULL, ".$customername.", ".$userid.", NULL);";
-  $mysqli = new mysqli(db::dbserver, db::dbuser, db::dbpass, db::dbname);
+  $sql = "INSERT INTO `tbl_customers` (CustomerID, CustomerName, UserID) VALUES (NULL, ".$customername.", ".$userid.");";
 
   $mysqli->query($sql);
   $insertid = $mysqli->insert_id;
 
   $mysqli->close();
 
-  return $sql;
+  return $insertid;
 } //addCustomer
+
+function addService($userid, $servicename, $hourlyrate) {
+  $mysqli = new mysqli(db::dbserver, db::dbuser, db::dbpass, db::dbname);
+
+  $userid = convertForInsert($userid);
+  $servicename = convertForInsert($servicename);
+  $hourlyrate = convertForInsert($hourlyrate);
+
+  $sql = "INSERT INTO `tbl_services` (ServiceID, ServiceName, UserID, HourlyRate) VALUES (NULL, ".$servicename.", ".$userid.", ".$hourlyrate.");";
+
+  $mysqli->query($sql);
+  $insertid = $mysqli->insert_id;
+
+  $mysqli->close();
+
+  return $insertid;
+} //addService
 
 function insertNewTime($userid, $customerid, $serviceid, $hours, $date, $desc, $weeklyid) {
   $savedesc = saveDescription($desc, $weeklyid, $userid);
@@ -625,13 +647,13 @@ function getTimes($userid, $date) {
     SELECT
       a.WeeklyID,
       a.Description,
-      a.ServiceName,
-      a.CustomerName,
+      #a.ServiceName,
+      #a.CustomerName,
       b.ServiceID,
-      #b.ServiceName,
+      b.ServiceName,
       b.HourlyRate,
       c.CustomerID,
-      #c.CustomerName,
+      c.CustomerName,
       d.TimeID,
       Date_Format(d.HourDate,'%Y-%m-%d') AS HourDate,
       d.Hours
@@ -719,6 +741,7 @@ function getUserIDFromToken($usertoken) {
 } //getUserIDFromToken
 
 function generateToken($userid) {
+  $mysqli = new mysqli(db::dbserver, db::dbuser, db::dbpass, db::dbname);
   $token = bin2hex(openssl_random_pseudo_bytes(32));
 
   if($userid == "") {
@@ -726,7 +749,6 @@ function generateToken($userid) {
   }
 
   $sql = "UPDATE tbl_users SET UserToken = ".convertForInsert($token)." WHERE UserID = ".convertForInsert($userid);
-  $mysqli = new mysqli(db::dbserver, db::dbuser, db::dbpass, db::dbname);
 
   $mysqli->query($sql);
   $mysqli->close();
@@ -735,8 +757,10 @@ function generateToken($userid) {
 } //generateToken
 
 function convertForInsert($str) {
+  $mysqli = new mysqli(db::dbserver, db::dbuser, db::dbpass, db::dbname);
+
   if ($str != "") {
-    $str = "'".$str."'";
+    $str = "'".$mysqli->real_escape_string($str)."'";
   } else {
     $str = "NULL";
   }
@@ -801,7 +825,7 @@ function addTask($description) {
 
   $data = array("success" => true, "id" => $insertid);
   return json_encode($data);
-} //addCustomer
+} //addTask
 
 function generateSalt($userid) {
   $randsalt = bin2hex(openssl_random_pseudo_bytes(4));

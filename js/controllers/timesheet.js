@@ -96,12 +96,28 @@ tsApp.controller('SheetController', [ '$scope', '$cookies', '$http', '$filter', 
         customername: $scope.customername,
         task: "addCustomer"
       }).success(function() {
+        $scope.timesheet['InsertCustomer'].$setPristine();
         $scope.customername='';
         $scope.getCustomers();
       }).error(function() {
         alert("Error inserting");
       });
     }; //addCustomer
+
+    $scope.addService = function() {
+      $http.post(serviceBase, {
+        servicename: $scope.servicename,
+        hourlyrate: $scope.hourlyrate,
+        task: "addService"
+      }).success(function() {
+        $scope.timesheet['InsertService'].$setPristine();
+        $scope.servicename='';
+        $scope.hourlyrate='';
+        $scope.getServices();
+      }).error(function() {
+        alert("Error inserting");
+      });
+    }; //addService
 
     $scope.getServices = function() {
       $http.post(serviceBase, {
