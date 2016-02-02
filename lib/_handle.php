@@ -71,6 +71,12 @@ if($task == "getTimes") {
   echo getTimes($userid, $date);
 } //task getTimes
 
+if($task == "deleteRow") {
+  $weeklyid = $request->weeklyid;
+  $data = deleteRow($userid, $weeklyid);
+  echo json_encode($data);
+} //task deleteRow
+
 if($task == "login") {
   $username = $request->email;
   $userpass = $request->password;
@@ -107,7 +113,6 @@ if($task == "resetDo") {
   $data = resetDo($email, $confirmationcode, $password);
   echo $data;
 } //task resetInit
-
 
 if($task == "saveSingle") {
   $amount = $request->amount;
@@ -386,7 +391,7 @@ function resetInit($email) {
 
   $data =  array("success" => $success, "message" => $msg);
   return json_encode($data);
-} //login
+} //resetInit
 
 function resetDo($email, $confirmationcode, $password) {
   $success = true;
@@ -424,7 +429,7 @@ function resetDo($email, $confirmationcode, $password) {
 
   $data =  array("success" => $success, "message" => $msg);
   return json_encode($data);
-}
+} //resetDo
 
 function register($firstname, $lastname, $email, $userpass) {
   $success = true;
@@ -713,6 +718,23 @@ function getTimes($userid, $date) {
   $data = array("success" => true, "records" => $data);
   return json_encode($data);
 } //getTimes
+
+function deleteRow($userid, $weeklyid) {
+  $mysqli = new mysqli(db::dbserver, db::dbuser, db::dbpass, db::dbname);
+  $weeklyid = convertForInsert($weeklyid);
+  $userid = convertForInsert($userid);
+
+  $sql = "DELETE FROM tbl_time WHERE UserID = ".$userid." AND WeeklyID = ".$weeklyid;
+  $rs = $mysqli->query($sql);
+//  $rs->free();
+
+  $sql = "DELETE FROM tbl_timesheet WHERE UserID = ".$userid." AND WeeklyID = ".$weeklyid;
+  $rs = $mysqli->query($sql);
+//  $rs->free();
+
+  $data = array("success" => true);
+  return $data;
+} //deleteRow
 
 function createUser($username, $useremail, $userpassword, $firstname, $lastname) {
 

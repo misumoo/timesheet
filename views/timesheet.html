@@ -175,7 +175,7 @@
           </tr>
           </thead>
           <tbody>
-          <tr ng-form="weekly_{{$index}}" ng-keypress="trigger($index)" ng-repeat="x in times">
+          <tr ng-form="weekly_{{$index}}_2" ng-keypress="trigger($index)" ng-repeat="x in times">
             <td><div class="editable" ng-model="x.Customer" wid="{{x.WeeklyID}}" data-old-value="{{x.Customer}}">{{x.Customer}}</div></td>
             <td><div class="editable" ng-model="x.Service" wid="{{x.WeeklyID}}" data-old-value="{{x.Customer}}">{{x.Service}}</div></td>
             <td><div class="editable" ng-model="x.Description" wid="{{x.WeeklyID}}" data-old-value="{{x.Customer}}">{{x.Description}}</div></td>
@@ -189,7 +189,7 @@
             <td><div ng-model="x.Sum" wid="{{x.WeeklyID}}" data-old-value="{{x.Customer}}">{{x.Sum}}</div></td>
             <td>
               <button class="tsbutton" ng-disabled="weekly_{{$index}}.WeeklyID.$modelValue < 1" name="delete" title="Delete" ng-click="deleteRow($index)"><i class="fa fa-trash"></i></button>
-              <div id="weekly_{{$index}}_hidables2" style="display: none;">
+              <div id="weekly_{{$index}}_hidables_2" style="display: none;">
                 <input name="WeeklyID" ng-model="x.WeeklyID" />
               </div>
             </td>

@@ -81,16 +81,6 @@ tsApp.controller('SheetController', [ '$scope', '$cookies', '$http', '$filter', 
       $scope.DateSuFull = ($filter('date')(new Date(dDate.setDate(dDate.getDate())), 'yyyy/MM/dd'));
     };
 
-    $scope.getCustomers = function() {
-      $http.post(serviceBase, {
-        task: "getCustomers"
-      }).success(function(response) {
-        $scope.customers = response.customers;
-      }).error(function() {
-        alert("Error retrieving Customers");
-      });
-    }; //getCustomers
-
     $scope.addCustomer = function() {
       $http.post(serviceBase, {
         customername: $scope.customername,
@@ -103,6 +93,16 @@ tsApp.controller('SheetController', [ '$scope', '$cookies', '$http', '$filter', 
         alert("Error inserting");
       });
     }; //addCustomer
+
+    $scope.getCustomers = function() {
+      $http.post(serviceBase, {
+        task: "getCustomers"
+      }).success(function(response) {
+        $scope.customers = response.customers;
+      }).error(function() {
+        alert("Error retrieving Customers");
+      });
+    }; //getCustomers
 
     $scope.addService = function() {
       $http.post(serviceBase, {
@@ -158,7 +158,7 @@ tsApp.controller('SheetController', [ '$scope', '$cookies', '$http', '$filter', 
               $scope.times = response.records;
             } else {
               $scope.times = "";
-              $scope.addnewrow();
+              //$scope.addnewrow();
             }
             $scope.numRows = $scope.times.length;
           }
@@ -223,9 +223,18 @@ tsApp.controller('SheetController', [ '$scope', '$cookies', '$http', '$filter', 
     }; //resetForm
 
     $scope.deleteRow = function(index) {
-      //todo: add code to delete row
-      console.log("Delete");
-      console.log($scope.timesheet['weekly_' + index].WeeklyID.$modelValue);
+      $http.post(serviceBase, {
+        weeklyid: $scope.timesheet['weekly_' + index].WeeklyID.$modelValue,
+        task: "deleteRow"
+      }).success(function(response) {
+        if(response.success) {
+          $scope.getTimes();
+        } else {
+          alert("Error deleting row");
+        }
+      }).error(function() {
+        alert("Error deleting row");
+      });
       //console.log($scope.timesheet['weekly_' + index]);
       //console.log(JSON.stringify($scope.timesheet['weekly_' + index]));
     }; //deleteRow
@@ -277,8 +286,8 @@ tsApp.controller('SheetController', [ '$scope', '$cookies', '$http', '$filter', 
         $scope.timesheet['weekly_' + index].$setPristine();
         $scope.trigger();
 
-        ($scope.timesheet['weekly_' + index].iCust.$dirty ? $scope.saveCustomer($scope.times[index].Customer, $scope.times[index].WeeklyID, index) : "");
-        ($scope.timesheet['weekly_' + index].iService.$dirty ? $scope.saveService($scope.times[index].Service, $scope.times[index].WeeklyID, index) : "");
+        //($scope.timesheet['weekly_' + index].iCust.$dirty ? $scope.saveCustomer($scope.times[index].Customer, $scope.times[index].WeeklyID, index) : "");
+        //($scope.timesheet['weekly_' + index].iService.$dirty ? $scope.saveService($scope.times[index].Service, $scope.times[index].WeeklyID, index) : "");
         ($scope.timesheet['weekly_' + index].ta_Desc.$dirty ? $scope.saveDesc($scope.times[index].Description, $scope.times[index].WeeklyID, index) : "");
         ($scope.timesheet['weekly_' + index].iM.$dirty ? $scope.saveTime($scope.times[index].M, $scope.DateMFull, $scope.times[index].WeeklyID, $scope.times[index].MTimeID, index, "m") : "");
         ($scope.timesheet['weekly_' + index].iTu.$dirty ? $scope.saveTime($scope.times[index].Tu, $scope.DateTuFull, $scope.times[index].WeeklyID, $scope.times[index].TuTimeID, index, "tu") : "");
