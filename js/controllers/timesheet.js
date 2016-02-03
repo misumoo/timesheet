@@ -99,6 +99,7 @@ tsApp.controller('SheetController', [ '$scope', '$cookies', '$http', '$filter', 
         task: "getCustomers"
       }).success(function(response) {
         $scope.customers = response.customers;
+        $scope.selectCustomers = $scope.customers[0];
       }).error(function() {
         alert("Error retrieving Customers");
       });
@@ -124,6 +125,7 @@ tsApp.controller('SheetController', [ '$scope', '$cookies', '$http', '$filter', 
         task: "getServices"
       }).success(function(response) {
         $scope.services = response.services;
+        $scope.selectServices = $scope.services[0];
       }).error(function() {
         alert("Error getting services");
       });
@@ -242,8 +244,8 @@ tsApp.controller('SheetController', [ '$scope', '$cookies', '$http', '$filter', 
     $scope.insertNewTime = function() {
       cancelProcess = false;
 
-      customerid = $scope.add_Customer;
-      serviceid = $scope.add_Service;
+      customerid = $scope.selectCustomers.CustomerID;
+      serviceid = $scope.selectServices.ServiceID;
       hours = $scope.add_Hours;
       desc = $scope.add_Desc;
       date = $filter('date')(new Date($scope.add_Date), $scope.formats[1]);
