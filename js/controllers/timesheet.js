@@ -272,6 +272,7 @@ tsApp.controller('SheetController', [ '$scope', '$cookies', '$http', '$filter', 
           $scope.add_Hours = null;
           $scope.add_Desc = null;
           $scope.getTimes();
+          $scope.toggleModal('dialogAddTime', 'close');
         }).error(function() {
           alert("Save unsuccessful, please try again.");
         });
@@ -450,25 +451,37 @@ tsApp.controller('SheetController', [ '$scope', '$cookies', '$http', '$filter', 
       console.log("Ping!");
     };
 
+    $scope.toggleModal = function(id, event) {
+      $("#" + id).modal(event);
+    };
+
+    $('#dialogAddService').on('shown.bs.modal', function () {
+      $('#servicename').focus();
+    });
+
+    $('#dialogAddCustomer').on('shown.bs.modal', function () {
+      $('#customername').focus();
+    });
+
   }]); //SheetController
 
-tsApp.directive("modalShow", function ($parse) {
-  return {
-    restrict: "A",
-    link: function (scope, element, attrs) {
-      //Hide or show the modal
-      scope.showModal = function (visible, elem) {
-        if (!elem)
-          elem = element;
-        if (visible)
-          $(elem).modal("show");
-        else
-          $(elem).modal("hide");
-        };
-      //Watch for changes to the modal-visible attribute
-      scope.toggleModal = function() {
-        scope.showModal(true);
-      };
-    }
-  };
-});
+//tsApp.directive("modalShow", function ($parse) {
+//  return {
+//    restrict: "A",
+//    link: function (scope, element, attrs) {
+//      //Hide or show the modal
+//      scope.showModal = function (visible, elem) {
+//        if (!elem)
+//          elem = element;
+//        if (visible)
+//          $(elem).modal("show");
+//        else
+//          $(elem).modal("hide");
+//        };
+//      //Watch for changes to the modal-visible attribute
+//      scope.toggleModal = function() {
+//        scope.showModal(true);
+//      };
+//    }
+//  };
+//});

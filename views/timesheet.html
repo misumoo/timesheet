@@ -3,103 +3,8 @@
   <form name="timesheet">
     <div class="inputwrapper" style="width: 100%;">
 
-      <section style="width: 400px;" ng-form="InsertNewRecord">
-        <div class="row">
-          <div class="col-lg-4">
-            <label for="add_Date">Date:</label>
-            <div ng-model="add_Date" class="datepicker" id="add_Date">
-              <p class="input-group">
-                <input type="text" class="form-control fancyinput"
-                       datepicker-popup="{{format}}" ng-model="add_Date" is-open="openedAdd" datepicker-options="dateOptions"
-                       date-disabled="disabled(date, mode)" show-button-bar="false" ng-required="true" close-text="Close" ng-change="" />
-                    <span class="input-group-btn">
-                      <button type="button" class="btn btn-default" ng-click="openAdd($event)"><i class="glyphicon glyphicon-calendar"></i></button>
-                    </span>
-              </p>
-            </div> <!-- datepicker -->
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-lg-4">
-            <div class="form-group">
-              <label for="add_Customer">Customer:</label>
-              <select id="add_Customer"
-                ng-model="selectCustomers"
-                ng-options="option.CustomerName for option in customers track by option.CustomerID"
-                class="form-control"></select>
-            </div>
-          </div>
-          <div class="col-lg-4">
-            <div class="form-group">
-              <label for="add_Service">Service:</label>
-              <!--<select id="add_Service" ng-model="add_Service" class="form-control">-->
-                <!--<option ng-repeat="x in services" value="{{x.ServiceID}}">{{x.ServiceName}}</option>-->
-              <!--</select>-->
-            <select id="add_Service"
-                ng-model="selectServices"
-                ng-options="option.ServiceName for option in services track by option.ServiceID"
-                class="form-control"></select>
-            </div>
-          </div>
-          <div class="col-lg-4">
-            <div class="form-group">
-              <label for="add_Hours">Hours:</label>
-              <input ng-model="add_Hours" type="text" class="form-control" id="add_Hours" />
-            </div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-lg-12">
-            <div class="form-group">
-              <label for="add_Desc">Description:</label>
-              <textarea ng-model="add_Desc" class="form-control" rows="5" id="add_Desc"></textarea>
-            </div>
-          </div>
-        </div>
-        <div class="row right btnsave">
-          <button ng-click="insertNewTime()" class="btn" ng-disabled="InsertNewRecord.$pristine">Add New Record</button>
-        </div>
-        <div class="clrb spacer"></div>
-      </section>
-
-      <section style="width: 400px;" ng-form="InsertCustomer">
-        <div class="row">
-          <div class="col-lg-12">
-            <div class="form-group">
-              <label for="customername">Customer:</label>
-              <input id="customername" ng-model="customername" class="fancyinput" />
-            </div>
-          </div>
-        </div>
-        <div class="row right btnsave">
-          <button ng-click="addCustomer()" class="btn" ng-disabled="InsertCustomer.$pristine">Add Customer</button>
-        </div>
-        <div class="clrb spacer"></div>
-      </section>
-
-      <section style="width: 400px;" ng-form="InsertService">
-        <div class="row">
-          <div class="col-lg-8">
-            <div class="form-group">
-              <label for="servicename">Service:</label>
-              <input id="servicename" ng-model="servicename" class="fancyinput" />
-            </div>
-          </div>
-          <div class="col-lg-4">
-            <div class="form-group">
-              <label for="hourlyrate">Hourly Rate:</label>
-              <input id="hourlyrate" ng-model="hourlyrate" class="fancyinput" />
-            </div>
-          </div>
-        </div>
-        <div class="row right btnsave">
-          <button ng-click="addService()" class="btn" ng-disabled="InsertService.$pristine">Add Service</button>
-        </div>
-        <div class="clrb spacer"></div>
-      </section>
-
       <section style="margin: auto;">
-        <div>
+        <div class="left">
           <div class="datepicker">
             <p class="input-group">
               <input type="text" class="form-control fancyinput"
@@ -111,6 +16,7 @@
             </p>
           </div> <!-- datepicker -->
         </div> <!-- DatePickerController -->
+        <div ng-click="toggleModal('dialogAddTime', 'show')" role="button" class="btn btn-default addRow">Add a row</div>
       </section>
 
       <section>
@@ -214,105 +120,136 @@
       </section>
     </div>
 
-    <!--<div ng-click="toggleModal()" role="button" class="btn btn-default" modalShow>Add a row</div> -->
+    <div id="dialogAddTime" class="modal fade" ng-form="InsertNewRecord">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title">Time Sheet Entry</h4>
+          </div>
+          <div class="modal-body">
 
-    <!--<div modal-show="showDialog" class="modal fade">-->
-      <!--<div class="modal-dialog">-->
-        <!--<div class="modal-content">-->
-          <!--<div class="modal-header">-->
-            <!--<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>-->
-            <!--<h4 class="modal-title">Time Sheet Entry</h4>-->
-          <!--</div>-->
-          <!--<div class="modal-body">-->
-
-            <!--<div class="row">-->
-              <!--<div class="col-lg-4">-->
-                <!--<label for="dateAdd">Date:</label>-->
-                <!--<div ng-model="dateAdd" class="datepicker" id="dateAdd">-->
-                  <!--<p class="input-group">-->
-                    <!--<input type="text" class="form-control fancyinput"-->
-                           <!--datepicker-popup="{{format}}" ng-model="dtAdd" is-open="openedAdd" datepicker-options="dateOptions"-->
-                           <!--date-disabled="disabled(date, mode)" show-button-bar="false" ng-required="true" close-text="Close" ng-change="getTimes()" />-->
-                    <!--<span class="input-group-btn">-->
-                      <!--<button type="button" class="btn btn-default" ng-click="openAdd($event)"><i class="glyphicon glyphicon-calendar"></i></button>-->
-                    <!--</span>-->
-                  <!--</p>-->
-                <!--</div> &lt;!&ndash; datepicker &ndash;&gt;-->
-              <!--</div>-->
-              <!--<div class="col-lg-4">-->
-                <!--<div class="form-group">-->
-                  <!--<label for="projectAdd">Project:</label>-->
-                  <!--<select ng-model="projectAdd" class="form-control" id="projectAdd">-->
-                    <!--<option>PIP</option>-->
-                    <!--<option>ObviO</option>-->
-                    <!--<option>BIC</option>-->
-                  <!--</select>-->
-                <!--</div>-->
-              <!--</div>-->
-              <!--<div class="col-lg-4">-->
-                <!--<label for="hoursAdd">Hours:</label>-->
-                <!--<input ng-model="hoursAdd" type="text" class="form-control" id="hoursAdd" />-->
-              <!--</div>-->
+            <div class="row">
+              <div class="col-lg-4">
+                <label for="add_Date">Date:</label>
+                <div ng-model="add_Date" class="datepicker" id="add_Date">
+                  <p class="input-group">
+                    <input type="text" class="form-control fancyinput"
+                           datepicker-popup="{{format}}" ng-model="add_Date" is-open="openedAdd" datepicker-options="dateOptions"
+                           date-disabled="disabled(date, mode)" show-button-bar="false" ng-required="true" close-text="Close" ng-change="" />
+                    <span class="input-group-btn">
+                      <button type="button" class="btn btn-default" ng-click="openAdd($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+                    </span>
+                  </p>
+                </div> <!-- datepicker -->
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-lg-4">
+                <div class="form-group">
+                  <label for="add_Customer">Customer: <img src="_images/add.png" class="addButton" ng-click="toggleModal('dialogAddCustomer', 'show')" ></label>
+                  <select id="add_Customer"
+                          ng-model="selectCustomers"
+                          ng-options="option.CustomerName for option in customers track by option.CustomerID"
+                          class="form-control"></select>
+                </div>
+              </div>
+              <div class="col-lg-4">
+                <div class="form-group">
+                  <label for="add_Service">Service: <img src="_images/add.png" class="addButton" ng-click="toggleModal('dialogAddService', 'show')" ></label>
+                  <select id="add_Service"
+                          ng-model="selectServices"
+                          ng-options="option.ServiceName for option in services track by option.ServiceID"
+                          class="form-control"></select>
+                </div>
+              </div>
+              <div class="col-lg-4">
+                <div class="form-group">
+                  <label for="add_Hours">Hours:</label>
+                  <input ng-model="add_Hours" type="text" class="form-control" id="add_Hours" />
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-lg-12">
+                <div class="form-group">
+                  <label for="add_Desc">Description:</label>
+                  <textarea ng-model="add_Desc" class="form-control" rows="5" id="add_Desc"></textarea>
+                </div>
+              </div>
+            </div>
+            <!--<div class="row right btnsave">-->
+              <!--<button ng-click="insertNewTime()" class="btn">Add New Record</button>-->
             <!--</div>-->
-            <!--<div class="row">-->
-              <!--<div class="col-lg-12">-->
-                <!--<label for="descAdd">Description:</label>-->
-                <!--<textarea ng-model="descAdd" class="form-control" rows="5" id="descAdd"></textarea>-->
-              <!--</div>-->
-            <!--</div>-->
+            <!--<div class="clrb spacer"></div>-->
+          </div>
+          <div class="modal-footer">
+            <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+            <button ng-click="insertNewTime()" ng-disabled="InsertNewRecord.$pristine" class="btn btn-primary">Save</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div>
 
+    <div id="dialogAddCustomer" class="modal fade" ng-form="InsertCustomer">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title">Add Customer</h4>
+          </div>
+          <div class="modal-body">
 
-          <!--</div>-->
-          <!--<div class="modal-footer">-->
-            <!--<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>-->
-            <!--<button ng-click="test()" class="btn btn-primary">Save</button>-->
-          <!--</div>-->
-        <!--</div>&lt;!&ndash; /.modal-content &ndash;&gt;-->
-      <!--</div>&lt;!&ndash; /.modal-dialog &ndash;&gt;-->
-    <!--</div>-->
+            <div class="row">
+              <div class="col-lg-12">
+                <div class="form-group">
+                  <label for="customername">Customer:</label>
+                  <input id="customername" ng-model="customername" class="fancyinput" autofocus/>
+                </div>
+              </div>
+            </div>
 
-    <!--<a ng-click="test()" role="button" class="btn btn-default" data-toggle="modal">Launch demo modal</a>-->
+          </div>
+          <div class="modal-footer">
+            <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+            <button ng-click="addCustomer()" ng-disabled="InsertCustomer.$pristine" class="btn btn-primary">Add Customer</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div>
 
-    <!--<div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">-->
-      <!--<div class="modal-dialog">-->
-        <!--<div class="modal-content">-->
-          <!--<div class="modal-header">-->
-            <!--<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>-->
-            <!--<h3 id="myModalLabel">Time Sheet Entry</h3>-->
-          <!--</div>-->
-          <!--<div class="modal-body">-->
+    <div id="dialogAddService" class="modal fade" ng-form="InsertService">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title">Add Service</h4>
+          </div>
+          <div class="modal-body">
 
-            <!--<div class="row">-->
-              <!--<div class="col-lg-4">-->
-                <!--<label for="datepicker">Date:</label>-->
-                <!--<input type="text" name="selected_date" id="datepicker"/>-->
-              <!--</div>-->
-              <!--<div class="col-lg-4">-->
-                <!--<div class="form-group">-->
-                  <!--<label for="sel1">Project:</label>-->
-                  <!--<select class="form-control" id="sel1">-->
-                    <!--<option>PIP</option>-->
-                    <!--<option>ObviO</option>-->
-                    <!--<option>BIC</option>-->
-                  <!--</select>-->
-                <!--</div>-->
-              <!--</div>-->
-              <!--<div class="col-lg-4">-->
-                <!--<label for="hours">Hours:</label>-->
-                <!--<input type="text" class="form-control" id="hours">-->
-              <!--</div>-->
-            <!--</div>-->
+            <div class="row">
+              <div class="col-lg-8">
+                <div class="form-group">
+                  <label for="servicename">Service:</label>
+                  <input id="servicename" ng-model="servicename" class="fancyinput"  autofocus />
+                </div>
+              </div>
+              <div class="col-lg-4">
+                <div class="form-group">
+                  <label for="hourlyrate">Hourly Rate:</label>
+                  <input id="hourlyrate" ng-model="hourlyrate" class="fancyinput" />
+                </div>
+              </div>
+            </div>
 
-            <!--<textarea class="form-control" rows="5" id="comment"></textarea>-->
-
-          <!--</div>-->
-          <!--<div class="modal-footer">-->
-            <!--<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>-->
-            <!--<button class="btn btn-primary">Save changes</button>-->
-          <!--</div>-->
-        <!--</div>-->
-      <!--</div>-->
-    <!--</div>-->
+          </div>
+          <div class="modal-footer">
+            <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+            <button ng-click="addService()" ng-disabled="InsertService.$pristine" class="btn btn-primary">Save</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div>
 
   </form>
 

@@ -144,10 +144,9 @@ body {
 }
 
 .addButton {
-  width: 30px;
-  height: 30px;
-  float: left;
-  margin: 6px;
+  width: 16px;
+  height: 16px;
+  margin: 0 0 3px 0;
 }
 
 .addButton:hover {
@@ -175,6 +174,10 @@ body {
 
 .cf {
   overflow: auto;
+}
+
+.addRow {
+  margin: 0 0 0 5px;
 }
 
 .changelog-header {
