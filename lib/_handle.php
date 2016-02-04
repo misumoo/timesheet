@@ -131,16 +131,16 @@ if($task == "saveDescription") {
 } //saveDescription
 
 if($task == "saveService") {
-  $service = $request->service;
+  $serviceid = $request->serviceid;
   $weeklyid = $request->weeklyid;
-  $data = saveService($service, "", $weeklyid, $userid);
+  $data = saveService("", $serviceid, $weeklyid, $userid);
   echo $data;
 } //saveService
 
 if($task == "saveCustomer") {
-  $customer = $request->customer;
+  $customerid = $request->customerid;
   $weeklyid = $request->weeklyid;
-  $data = saveCustomer($customer, "", $weeklyid, $userid);
+  $data = saveCustomer("", $customerid, $weeklyid, $userid);
   echo $data;
 } //saveCustomer
 
@@ -521,47 +521,65 @@ function login($username, $userpass) {
 
 function getServices($userid) {
   $data = "";
+  $msg = "";
   $dbdata = "";
+  $cancelprocess = false;
 
-  $sql = "SELECT ServiceID, ServiceName FROM tbl_services WHERE UserID = ".$userid;
-  $mysqli = new mysqli(db::dbserver, db::dbuser, db::dbpass, db::dbname);
-
-  $rs = $mysqli->query($sql);
-  while($row = $rs->fetch_assoc()) {
-    $dbdata = array(
-      "ServiceID" => $row["ServiceID"],
-      "ServiceName" => $row['ServiceName']
-    );
-
-    $data[] = $dbdata;
+  if($userid == "") {
+    $msg = "No userid or token";
+    $cancelprocess = true;
   }
-  $rs->free();
-  $mysqli->close();
 
-  $data = array("message" => "", "services" => $data, "success" => true);
+  if(!$cancelprocess) {
+    $sql = "SELECT ServiceID, ServiceName FROM tbl_services WHERE UserID = " . $userid;
+    $mysqli = new mysqli(db::dbserver, db::dbuser, db::dbpass, db::dbname);
+
+    $rs = $mysqli->query($sql);
+    while ($row = $rs->fetch_assoc()) {
+      $dbdata = array(
+        "ServiceID" => $row["ServiceID"],
+        "ServiceName" => $row['ServiceName']
+      );
+
+      $data[] = $dbdata;
+    }
+    $rs->free();
+    $mysqli->close();
+  }
+
+  $data = array("message" => $msg, "services" => $data, "success" => true);
   return json_encode($data);
 } //getServices
 
 function getCustomers($userid) {
   $data = "";
+  $msg = "";
   $dbdata = "";
+  $cancelprocess = false;
 
-  $sql = "SELECT CustomerID, CustomerName FROM tbl_customers WHERE UserID = ".$userid;
-  $mysqli = new mysqli(db::dbserver, db::dbuser, db::dbpass, db::dbname);
-
-  $rs = $mysqli->query($sql);
-  while($row = $rs->fetch_assoc()) {
-    $dbdata = array(
-      "CustomerID" => $row["CustomerID"],
-      "CustomerName" => $row['CustomerName']
-    );
-
-    $data[] = $dbdata;
+  if($userid == "") {
+    $msg = "No userid or token";
+    $cancelprocess = true;
   }
-  $rs->free();
-  $mysqli->close();
 
-  $data = array("message" => "", "customers" => $data, "success" => true);
+  if(!$cancelprocess) {
+    $sql = "SELECT CustomerID, CustomerName FROM tbl_customers WHERE UserID = ".$userid;
+    $mysqli = new mysqli(db::dbserver, db::dbuser, db::dbpass, db::dbname);
+
+    $rs = $mysqli->query($sql);
+    while($row = $rs->fetch_assoc()) {
+      $dbdata = array(
+        "CustomerID" => $row["CustomerID"],
+        "CustomerName" => $row['CustomerName']
+      );
+
+      $data[] = $dbdata;
+    }
+    $rs->free();
+    $mysqli->close();
+  }
+
+  $data = array("message" => $msg, "customers" => $data, "success" => true);
   return json_encode($data);
 } //getCustomers
 

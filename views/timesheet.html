@@ -23,9 +23,6 @@
           <div class="col-lg-4">
             <div class="form-group">
               <label for="add_Customer">Customer:</label>
-              <!--<select id="add_Customer" ng-model="add_Customer" class="form-control">&lt;!&ndash; TODO: This is not the angular way. The way below is, but for right now I am leaving it. Fix me later. &ndash;&gt;-->
-                <!--<option ng-repeat="x in customers" value="{{x.CustomerID}}">{{x.CustomerName}}</option>-->
-              <!--</select>-->
               <select id="add_Customer"
                 ng-model="selectCustomers"
                 ng-options="option.CustomerName for option in customers track by option.CustomerID"
@@ -136,9 +133,21 @@
           </thead>
           <tbody>
             <tr ng-form="weekly_{{$index}}" ng-keypress="trigger($index)" ng-repeat="x in times">
-              <td><input name="iCust" ng-model="x.Customer" class="fancyinput" wid="{{x.WeeklyID}}" data-old-value="{{x.Customer}}" value="{{x.Customer}}" customer></td>
               <td>
-                <input name="iService" ng-model="x.Service" class="fancyinput" placeholder="..." wid="{{x.WeeklyID}}" service />
+                <!--<input name="iCust" ng-model="x.Customer" class="fancyinput" wid="{{x.WeeklyID}}" data-old-value="{{x.Customer}}" value="{{x.Customer}}" customer></td>-->
+                <select name="iCust" wid="{{x.Customer}}" name="iService" ng-model="x.CustomerID" class="form-control">
+                  <option ng-selected="x.CustomerID == customer.CustomerID" ng-repeat="customer in customers" value="{{customer.CustomerID}}">{{customer.CustomerName}}</option>
+                </select>
+              <td>
+                <!--<input ng-model="x.Service" class="fancyinput" placeholder="..." service />-->
+                <!--<select name="iService" wid="{{x.WeeklyID}}" name="iService"-->
+                    <!--ng-model="x.Service"-->
+                    <!--ng-options="option.ServiceName for option in services track by option.ServiceID"-->
+                    <!--class="form-control">-->
+                <!--</select>-->
+                <select name="iService" wid="{{x.WeeklyID}}" name="iService" ng-model="x.ServiceID" class="form-control">
+                  <option ng-selected="x.ServiceID == service.ServiceID" ng-repeat="service in services" value="{{service.ServiceID}}">{{service.ServiceName}}</option>
+                </select>
               </td>
               <td><textarea name="ta_Desc" ng-model="x.Description" class="fancyinput" wid="{{x.WeeklyID}}" data-old-value="{{x.Description}}" description>{{x.Description}}</textarea></td>
               <td><input name="iM" ng-model="x.M" class="fancyinput" placeholder="0.00" tid="{{x.MTimeID}}" wid="{{x.WeeklyID}}" resourcedate="{{DateMFull}}" data-old-value="{{x.M}}" value="{{x.M}}" time></td>

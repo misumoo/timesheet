@@ -98,8 +98,10 @@ tsApp.controller('SheetController', [ '$scope', '$cookies', '$http', '$filter', 
       $http.post(serviceBase, {
         task: "getCustomers"
       }).success(function(response) {
-        $scope.customers = response.customers;
-        $scope.selectCustomers = $scope.customers[0];
+        if(response.message != "No userid or token") {
+          $scope.customers = response.customers;
+          $scope.selectCustomers = $scope.customers[0];
+        }
       }).error(function() {
         alert("Error retrieving Customers");
       });
@@ -124,8 +126,10 @@ tsApp.controller('SheetController', [ '$scope', '$cookies', '$http', '$filter', 
       $http.post(serviceBase, {
         task: "getServices"
       }).success(function(response) {
-        $scope.services = response.services;
-        $scope.selectServices = $scope.services[0];
+        if(response.message != "No userid or token") {
+          $scope.services = response.services;
+          $scope.selectServices = $scope.services[0];
+        }
       }).error(function() {
         alert("Error getting services");
       });
@@ -177,9 +181,9 @@ tsApp.controller('SheetController', [ '$scope', '$cookies', '$http', '$filter', 
     $scope.setup = function() {
       $scope.today();
       $scope.getCustomers();
+      $scope.getServices();
       $scope.getTimes();
       $scope.todayAdd();
-      $scope.getServices();
     }; //setup
 
     $scope.trigger = function(index) {
@@ -285,11 +289,11 @@ tsApp.controller('SheetController', [ '$scope', '$cookies', '$http', '$filter', 
         $scope.getNewWeeklyID(index);
       } else {
         //not inserting, update our row on everything that is dirty
-        $scope.timesheet['weekly_' + index].$setPristine();
         $scope.trigger();
 
-        //($scope.timesheet['weekly_' + index].iCust.$dirty ? $scope.saveCustomer($scope.times[index].Customer, $scope.times[index].WeeklyID, index) : "");
-        //($scope.timesheet['weekly_' + index].iService.$dirty ? $scope.saveService($scope.times[index].Service, $scope.times[index].WeeklyID, index) : "");
+        ($scope.timesheet['weekly_' + index].iCust.$touched ? $scope.saveCustomer($scope.times[index].CustomerID, $scope.times[index].WeeklyID, index) : "");
+        ($scope.timesheet['weekly_' + index].iService.$touched ? $scope.saveService($scope.times[index].ServiceID, $scope.times[index].WeeklyID, index) : "");
+
         ($scope.timesheet['weekly_' + index].ta_Desc.$dirty ? $scope.saveDesc($scope.times[index].Description, $scope.times[index].WeeklyID, index) : "");
         ($scope.timesheet['weekly_' + index].iM.$dirty ? $scope.saveTime($scope.times[index].M, $scope.DateMFull, $scope.times[index].WeeklyID, $scope.times[index].MTimeID, index, "m") : "");
         ($scope.timesheet['weekly_' + index].iTu.$dirty ? $scope.saveTime($scope.times[index].Tu, $scope.DateTuFull, $scope.times[index].WeeklyID, $scope.times[index].TuTimeID, index, "tu") : "");
@@ -298,6 +302,7 @@ tsApp.controller('SheetController', [ '$scope', '$cookies', '$http', '$filter', 
         ($scope.timesheet['weekly_' + index].iF.$dirty ? $scope.saveTime($scope.times[index].F, $scope.DateFFull, $scope.times[index].WeeklyID, $scope.times[index].FTimeID, index, "f") : "");
         ($scope.timesheet['weekly_' + index].iSa.$dirty ? $scope.saveTime($scope.times[index].Sa, $scope.DateSaFull, $scope.times[index].WeeklyID, $scope.times[index].SaTimeID, index, "sa") : "");
         ($scope.timesheet['weekly_' + index].iSu.$dirty ? $scope.saveTime($scope.times[index].Su, $scope.DateSuFull, $scope.times[index].WeeklyID, $scope.times[index].SuTimeID, index, "su") : "");
+        $scope.timesheet['weekly_' + index].$setPristine();
       }
     }; //saveRow
 
@@ -320,32 +325,32 @@ tsApp.controller('SheetController', [ '$scope', '$cookies', '$http', '$filter', 
       });
     }; //saveDesc
 
-    $scope.saveCustomer = function(customer, weeklyid, index) {
-      customer = typeof customer !== 'undefined' ? customer : "";
+    $scope.saveCustomer = function(customerid, weeklyid, index) {
+      customerid = typeof customerid !== 'undefined' ? customerid : "";
       weeklyid = typeof weeklyid !== 'undefined' ? weeklyid : "";
       $http.post(serviceBase, {
-        customer: customer,
+        customerid: customerid,
         weeklyid: weeklyid,
         task: "saveCustomer"
       }).success(function(response) {
         //success
-        $scope.timesheet['weekly_' + index].iCust.$setPristine();
+        $scope.timesheet['weekly_' + index].iCust.$touched = false;
       }).error(function() {
         $scope.timesheet['weekly_' + index].$setDirty();
         alert("Save unsuccessful, please try again.");
       });
     }; //saveCustomer
 
-    $scope.saveService = function(service, weeklyid, index) {
-      service = typeof service !== 'undefined' ? service : "";
+    $scope.saveService = function(serviceid, weeklyid, index) {
+      serviceid = typeof serviceid !== 'undefined' ? serviceid : "";
       weeklyid = typeof weeklyid !== 'undefined' ? weeklyid : "";
       $http.post(serviceBase, {
-        service: service,
+        serviceid: serviceid,
         weeklyid: weeklyid,
         task: "saveService"
       }).success(function(response) {
         //success
-        $scope.timesheet['weekly_' + index].iService.$setPristine();
+        $scope.timesheet['weekly_' + index].iService.$touched = false;
       }).error(function() {
         $scope.timesheet['weekly_' + index].$setDirty();
         alert("Save unsuccessful, please try again.");
