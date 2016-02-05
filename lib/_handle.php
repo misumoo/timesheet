@@ -8,17 +8,12 @@
 
 session_start();
 
-class db {
-  const dbserver = "localhost";
-  const dbuser = 'creatkd5_chris';
-  const dbpass = 'HdzGdhXjTNSJ6WS3';
-  const dbname = 'creatkd5_tspro';
-}
 class userInfo {
   public $userfirstname;
   public $usertoken;
 }
 
+require 'db.php';
 require 'phpmailer/PHPMailerAutoload.php';
 
 (isset($_COOKIE['usertoken']) ? $usertoken = $_COOKIE['usertoken'] : $usertoken = "");
