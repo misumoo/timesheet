@@ -1,2 +1,3 @@
 .idea/
-lib/db.php
+lib/class.Database.php
+lib/class.Email.php

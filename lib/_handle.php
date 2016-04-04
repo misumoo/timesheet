@@ -13,7 +13,8 @@ class userInfo {
   public $usertoken;
 }
 
-require 'db.php';
+require 'class.Database.php';
+require 'class.Email.php';
 require 'phpmailer/PHPMailerAutoload.php';
 
 (isset($_COOKIE['usertoken']) ? $usertoken = $_COOKIE['usertoken'] : $usertoken = "");
@@ -185,7 +186,7 @@ function lookupService($userid, $service) {
   }
 
   $sql = "SELECT ServiceID, ServiceName FROM tbl_services WHERE ServiceName = ".$service." AND UserID = ".$userid;
-  $mysqli = new mysqli(db::dbserver, db::dbuser, db::dbpass, db::dbname);
+  $mysqli = new mysqli(Database::dbserver, Database::dbuser, Database::dbpass, Database::dbname);
 
   $rs = $mysqli->query($sql);
   while($row = $rs->fetch_assoc()) {
@@ -209,7 +210,7 @@ function saveDescription($description, $weeklyid, $userid) {
     $sql = "UPDATE `tbl_timesheet` SET Description = ".$description." WHERE WeeklyID = ".$weeklyid." AND UserID = ".$userid.";";
   }
 
-  $mysqli = new mysqli(db::dbserver, db::dbuser, db::dbpass, db::dbname);
+  $mysqli = new mysqli(Database::dbserver, Database::dbuser, Database::dbpass, Database::dbname);
 
   $mysqli->query($sql);
   $mysqli->close();
@@ -230,7 +231,7 @@ function saveService($service, $serviceid, $weeklyid, $userid) {
     $sql = "UPDATE `tbl_timesheet` SET ServiceID = ".$serviceid." WHERE WeeklyID = ".$weeklyid." AND UserID = ".$userid.";";
   }
 
-  $mysqli = new mysqli(db::dbserver, db::dbuser, db::dbpass, db::dbname);
+  $mysqli = new mysqli(Database::dbserver, Database::dbuser, Database::dbpass, Database::dbname);
 
   $mysqli->query($sql);
   $mysqli->close();
@@ -251,7 +252,7 @@ function saveCustomer($customer, $customerid, $weeklyid, $userid) {
     $sql = "UPDATE `tbl_timesheet` SET CustomerID = ".$customerid." WHERE WeeklyID = ".$weeklyid." AND UserID = ".$userid.";";
   }
 
-  $mysqli = new mysqli(db::dbserver, db::dbuser, db::dbpass, db::dbname);
+  $mysqli = new mysqli(Database::dbserver, Database::dbuser, Database::dbpass, Database::dbname);
 
   $mysqli->query($sql);
   $mysqli->close();
@@ -310,7 +311,7 @@ function timeControl($weeklyid, $userid, $date, $hours, $timeid) {
   #        END TASKS        #
   ###########################
 
-  $mysqli = new mysqli(db::dbserver, db::dbuser, db::dbpass, db::dbname);
+  $mysqli = new mysqli(Database::dbserver, Database::dbuser, Database::dbpass, Database::dbname);
 
   $mysqli->query($sql);
   $insertid = $mysqli->insert_id;
@@ -331,7 +332,7 @@ function resetInit($email) {
           INSERT INTO tbl_users_reset
           (ResetID, Email, ResetTimeStamp, IPAddress, ResetCode) VALUES
           (NULL, ".convertForInsert($email).", NULL, ".convertForInsert($_SERVER['REMOTE_ADDR']).", ".convertForInsert($resetcode).")";
-  $mysqli = new mysqli(db::dbserver, db::dbuser, db::dbpass, db::dbname);
+  $mysqli = new mysqli(Database::dbserver, Database::dbuser, Database::dbpass, Database::dbname);
 
   $mysqli->multi_query($sql);
 
@@ -364,14 +365,14 @@ function resetInit($email) {
 //  $mail->Mailer = 'smtp';
 //  $mail->Host = 'smtp.gmail.com';           // Specify main and backup SMTP servers
 //  $mail->SMTPAuth = true;                   // Enable SMTP authentication
-//  $mail->Username = 'tsprodb@gmail.com';    // SMTP username
-//  $mail->Password = 'tr[]pp@3!!a';          // SMTP password
+//  $mail->Username = Email::USER_NAME;    // SMTP username
+//  $mail->Password = Email::PASSWORD;          // SMTP password
 //  $mail->SMTPSecure = 'tls';                // Enable TLS encryption, `ssl` also accepted
 //  $mail->Port = 587;                        // TCP port to connect to
 
-  $mail->SetFrom('tsprodb@gmail.com', 'Timesheet');
+  $mail->SetFrom(Email::USER_NAME, 'Timesheet');
 
-  $mail->From = 'tsprodb@gmail.com';
+  $mail->From = Email::USER_NAME;
   $mail->FromName = 'Timesheet';
 
   $mail->addAddress($useremail, '');        // Add a recipient
@@ -395,7 +396,7 @@ function resetDo($email, $confirmationcode, $password) {
   $reset = false;
 
   $sql = "SELECT * FROM tbl_users_reset WHERE Email = ".convertForInsert($email)." AND Expired = '0'";
-  $mysqli = new mysqli(db::dbserver, db::dbuser, db::dbpass, db::dbname);
+  $mysqli = new mysqli(Database::dbserver, Database::dbuser, Database::dbpass, Database::dbname);
   $rs = $mysqli->query($sql);
   while($row = $rs->fetch_assoc()) {
     if($row['ResetCode'] == trim($confirmationcode)) {
@@ -405,7 +406,7 @@ function resetDo($email, $confirmationcode, $password) {
 
   if($reset) {
     $sql = "SELECT UserID FROM tbl_users WHERE Email = ".convertForInsert($email);
-    $mysqli = new mysqli(db::dbserver, db::dbuser, db::dbpass, db::dbname);
+    $mysqli = new mysqli(Database::dbserver, Database::dbuser, Database::dbpass, Database::dbname);
     $rs = $mysqli->query($sql);
     while($row = $rs->fetch_assoc()) {
       $userid = $row['UserID'];
@@ -444,7 +445,7 @@ function register($firstname, $lastname, $email, $userpass) {
   $firstname = convertForInsert($firstname);
 
   $sql = "SELECT Email FROM tbl_users WHERE Email = ".$email;
-  $mysqli = new mysqli(db::dbserver, db::dbuser, db::dbpass, db::dbname);
+  $mysqli = new mysqli(Database::dbserver, Database::dbuser, Database::dbpass, Database::dbname);
 
   $rs = $mysqli->query($sql);
   while($row = $rs->fetch_assoc()) {
@@ -463,7 +464,7 @@ function register($firstname, $lastname, $email, $userpass) {
     $sql = "INSERT INTO tbl_users
           (UserID, LastName, FirstName, Email, Password) VALUES
           (NULL, $lastname, $firstname, $email, $userpass)";
-    $mysqli = new mysqli(db::dbserver, db::dbuser, db::dbpass, db::dbname);
+    $mysqli = new mysqli(Database::dbserver, Database::dbuser, Database::dbpass, Database::dbname);
 
     $mysqli->query($sql);
     $userid = $mysqli->insert_id;
@@ -486,7 +487,7 @@ function login($username, $userpass) {
   $salt = "";
 
   $sql = "SELECT Salt, UserID FROM tbl_users WHERE Email = ".convertForInsert($username);
-  $mysqli = new mysqli(db::dbserver, db::dbuser, db::dbpass, db::dbname);
+  $mysqli = new mysqli(Database::dbserver, Database::dbuser, Database::dbpass, Database::dbname);
   $rs = $mysqli->query($sql);
   while($row = $rs->fetch_assoc()) {
     $userid = $row['UserID'];
@@ -499,7 +500,7 @@ function login($username, $userpass) {
   $mysqli->close();
 
   $sql = "SELECT UserID, FirstName FROM tbl_users WHERE Email = ".convertForInsert($username)." AND Password = ".convertForInsert($salted);
-  $mysqli = new mysqli(db::dbserver, db::dbuser, db::dbpass, db::dbname);
+  $mysqli = new mysqli(Database::dbserver, Database::dbuser, Database::dbpass, Database::dbname);
 
   $rs = $mysqli->query($sql);
   if($rs->num_rows < 1) {
@@ -527,7 +528,7 @@ function getServices($userid) {
 
   if(!$cancelprocess) {
     $sql = "SELECT ServiceID, ServiceName FROM tbl_services WHERE UserID = " . $userid;
-    $mysqli = new mysqli(db::dbserver, db::dbuser, db::dbpass, db::dbname);
+    $mysqli = new mysqli(Database::dbserver, Database::dbuser, Database::dbpass, Database::dbname);
 
     $rs = $mysqli->query($sql);
     while ($row = $rs->fetch_assoc()) {
@@ -559,7 +560,7 @@ function getCustomers($userid) {
 
   if(!$cancelprocess) {
     $sql = "SELECT CustomerID, CustomerName FROM tbl_customers WHERE UserID = ".$userid;
-    $mysqli = new mysqli(db::dbserver, db::dbuser, db::dbpass, db::dbname);
+    $mysqli = new mysqli(Database::dbserver, Database::dbuser, Database::dbpass, Database::dbname);
 
     $rs = $mysqli->query($sql);
     while($row = $rs->fetch_assoc()) {
@@ -579,7 +580,7 @@ function getCustomers($userid) {
 } //getCustomers
 
 function getNewWeeklyID($userid) {
-  $mysqli = new mysqli(db::dbserver, db::dbuser, db::dbpass, db::dbname);
+  $mysqli = new mysqli(Database::dbserver, Database::dbuser, Database::dbpass, Database::dbname);
 
   $userid = convertForInsert($userid);
 
@@ -594,7 +595,7 @@ function getNewWeeklyID($userid) {
 } //getNewWeeklyID
 
 function addCustomer($userid, $customername) {
-  $mysqli = new mysqli(db::dbserver, db::dbuser, db::dbpass, db::dbname);
+  $mysqli = new mysqli(Database::dbserver, Database::dbuser, Database::dbpass, Database::dbname);
 
   $userid = convertForInsert($userid);
   $customername = convertForInsert($customername);
@@ -610,7 +611,7 @@ function addCustomer($userid, $customername) {
 } //addCustomer
 
 function addService($userid, $servicename, $hourlyrate) {
-  $mysqli = new mysqli(db::dbserver, db::dbuser, db::dbpass, db::dbname);
+  $mysqli = new mysqli(Database::dbserver, Database::dbuser, Database::dbpass, Database::dbname);
 
   $userid = convertForInsert($userid);
   $servicename = convertForInsert($servicename);
@@ -637,7 +638,7 @@ function insertNewTime($userid, $customerid, $serviceid, $hours, $date, $desc, $
 
 
   $sql = "INSERT INTO `tbl_time` (TimeID, UserID, Hours, HourDate, WeeklyID) VALUES (NULL, ".$userid.", ".$hours.", ".$date.", ".$weeklyid.");";
-  $mysqli = new mysqli(db::dbserver, db::dbuser, db::dbpass, db::dbname);
+  $mysqli = new mysqli(Database::dbserver, Database::dbuser, Database::dbpass, Database::dbname);
 
   $mysqli->query($sql);
   $insertid = $mysqli->insert_id;
@@ -685,7 +686,7 @@ function getTimes($userid, $date) {
     WHERE a.UserID = '".$userid."'
       AND d.HourDate BETWEEN '".$m."' AND '".$su."'
     ";
-  $mysqli = new mysqli(db::dbserver, db::dbuser, db::dbpass, db::dbname);
+  $mysqli = new mysqli(Database::dbserver, Database::dbuser, Database::dbpass, Database::dbname);
 
   $rs = $mysqli->query($sql);
   while($row = $rs->fetch_assoc()) {
@@ -733,7 +734,7 @@ function getTimes($userid, $date) {
 } //getTimes
 
 function deleteRow($userid, $weeklyid) {
-  $mysqli = new mysqli(db::dbserver, db::dbuser, db::dbpass, db::dbname);
+  $mysqli = new mysqli(Database::dbserver, Database::dbuser, Database::dbpass, Database::dbname);
   $weeklyid = convertForInsert($weeklyid);
   $userid = convertForInsert($userid);
 
@@ -758,7 +759,7 @@ function getUserIDFromToken($usertoken) {
   $usertoken = convertForInsert($usertoken);
 
   $sql = "SELECT UserID from tbl_users WHERE UserToken = ".$usertoken;
-  $mysqli = new mysqli(db::dbserver, db::dbuser, db::dbpass, db::dbname);
+  $mysqli = new mysqli(Database::dbserver, Database::dbuser, Database::dbpass, Database::dbname);
 
   $rs = $mysqli->query($sql);
   if($rs->num_rows < 1 || $usertoken == "") {
@@ -776,7 +777,7 @@ function getUserIDFromToken($usertoken) {
 } //getUserIDFromToken
 
 function generateToken($userid) {
-  $mysqli = new mysqli(db::dbserver, db::dbuser, db::dbpass, db::dbname);
+  $mysqli = new mysqli(Database::dbserver, Database::dbuser, Database::dbpass, Database::dbname);
   $token = bin2hex(openssl_random_pseudo_bytes(32));
 
   if($userid == "") {
@@ -792,7 +793,7 @@ function generateToken($userid) {
 } //generateToken
 
 function convertForInsert($str) {
-  $mysqli = new mysqli(db::dbserver, db::dbuser, db::dbpass, db::dbname);
+  $mysqli = new mysqli(Database::dbserver, Database::dbuser, Database::dbpass, Database::dbname);
 
   if ($str != "") {
     $str = "'".$mysqli->real_escape_string($str)."'";
@@ -831,7 +832,7 @@ function getTasks() {
   $dbdata = "";
 
   $sql = "SELECT * FROM tbl_tasks";
-  $mysqli = new mysqli(db::dbserver, db::dbuser, db::dbpass, db::dbname);
+  $mysqli = new mysqli(Database::dbserver, Database::dbuser, Database::dbpass, Database::dbname);
 
   $rs = $mysqli->query($sql);
   while($row = $rs->fetch_assoc()) {
@@ -851,7 +852,7 @@ function addTask($description) {
   $description = convertForInsert($description);
 
   $sql = "INSERT INTO `tbl_tasks` (TaskID, TaskDescription) VALUES (NULL, ".$description.");";
-  $mysqli = new mysqli(db::dbserver, db::dbuser, db::dbpass, db::dbname);
+  $mysqli = new mysqli(Database::dbserver, Database::dbuser, Database::dbpass, Database::dbname);
 
   $mysqli->query($sql);
   $insertid = $mysqli->insert_id;
@@ -866,7 +867,7 @@ function generateSalt($userid) {
   $randsalt = bin2hex(openssl_random_pseudo_bytes(4));
   //if we have to generate salt, we need to update it as well
   $sql = "UPDATE tbl_users SET Salt = '".$randsalt."' WHERE UserID = '".$userid."'";
-  $mysqli = new mysqli(db::dbserver, db::dbuser, db::dbpass, db::dbname);
+  $mysqli = new mysqli(Database::dbserver, Database::dbuser, Database::dbpass, Database::dbname);
 
   $mysqli->query($sql);
   $mysqli->close();
@@ -881,7 +882,7 @@ function encryptPassword($pass, $salt) {
 
 function updatePassword($pass, $userid) {
   $sql = "UPDATE tbl_users SET Password = '".$pass."' WHERE UserID = '".$userid."'";
-  $mysqli = new mysqli(db::dbserver, db::dbuser, db::dbpass, db::dbname);
+  $mysqli = new mysqli(Database::dbserver, Database::dbuser, Database::dbpass, Database::dbname);
 
   $mysqli->query($sql);
   $mysqli->close();
