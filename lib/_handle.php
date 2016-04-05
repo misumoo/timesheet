@@ -699,13 +699,13 @@ function getTimes($userid, $date) {
       ($dbdata != "" ? $data[] = $dbdata : "");
 
       $dbdata = array(
-          "WeeklyID" => $currentrecord,
-          "Description" => $row['Description'],
-          "ServiceID" => $row['ServiceID'],
-          "Service" => $row['ServiceName'],
-          "CustomerID" => $row['CustomerID'],
-          "Customer" => $row['CustomerName'],
-          "HourlyRate" => $row['HourDate']
+        "WeeklyID" => $currentrecord,
+        "Description" => $row['Description'],
+        "ServiceID" => $row['ServiceID'],
+        "Service" => $row['ServiceName'],
+        "CustomerID" => $row['CustomerID'],
+        "Customer" => $row['CustomerName'],
+        "HourlyRate" => $row['HourDate']
       );
     }
     switch ($row['HourDate']) {
@@ -779,7 +779,8 @@ function getAllEntries($userid, $billed) {
       "Service" => $row['ServiceName'],
       "CustomerID" => $row['CustomerID'],
       "Customer" => $row['CustomerName'],
-      "HourlyRate" => $row['HourDate'],
+      "TimeDate" => $row['HourDate'],
+      "Hours" => $row['Hours'],
       "InvoiceNumber" => NULL,
     );
 

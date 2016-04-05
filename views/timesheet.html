@@ -139,10 +139,11 @@
             <tbody>
               <tr>
                 <th class="TimeID pointer"><a ng-click="sort_by('TimeID')">Id <i class="fa fa-sort"></i></a></th>
+                <th class="TimeDate pointer"><a ng-click="sort_by('TimeDate')">TimeDate <i class="fa fa-sort"></i></a></th>
                 <th class="Customer pointer"><a ng-click="sort_by('Customer')">Customer <i class="fa fa-sort"></i></a></th>
                 <th class="Service pointer"><a ng-click="sort_by('Service')">Service <i class="fa fa-sort"></i></a></th>
                 <th class="Description" title="non-sortable">Description</th>
-                <th class="HourlyRate pointer"><a ng-click="sort_by('HourlyRate')">Time <i class="fa fa-sort"></i></a></th>
+                <th class="Hours pointer"><a ng-click="sort_by('Hours')">Hours <i class="fa fa-sort"></i></a></th>
                 <th class="InvoiceNumber pointer"><a ng-click="sort_by('InvoiceNumber')">Invoice# <i class="fa fa-sort"></i></a></th>
                 <th></th>
               </tr>
@@ -150,10 +151,11 @@
             <tbody>
               <tr ng-repeat="data in pagedItems[currentPage] | orderBy:sortingOrder:reverse">
                 <td>{{data.TimeID}}</td>
+                <td>{{data.TimeDate}}</td>
                 <td>{{data.Customer}}</td>
                 <td>{{data.Service}}</td>
                 <td>{{data.Description}}</td>
-                <td>{{data.HourlyRate}}</td>
+                <td>{{data.Hours}}</td>
                 <td>{{data.InvoiceNumber}}</td>
                 <td><button class="tsbutton" ng-click="deleteItem($index)" title="Delete" name="delete"><i class="fa fa-trash"></i></button><a class="pointer tsbutton"></a></td>
               </tr>

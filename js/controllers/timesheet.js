@@ -499,11 +499,11 @@ tsApp.controller('SheetController', [ '$scope', '$cookies', '$http', '$filter', 
       }
     };
 
-    var sortingOrder = 'id'; //default sort
+    var sortingOrder = 'TimeDate'; //default sort
 
     $scope.sortingOrder = sortingOrder;
+    $scope.reverse = true; //Sort ASC by default
     $scope.pageSizes = [5,10,25,50];
-    $scope.reverse = false;
     $scope.filteredItems = [];
     $scope.groupedItems = [];
     $scope.itemsPerPage = 10;
