@@ -511,7 +511,6 @@ tsApp.controller('SheetController', [ '$scope', '$cookies', '$http', '$filter', 
     $scope.currentPage = 0;
     $scope.allEntries = "";
 
-
     var searchMatch = function (haystack, needle) {
       if (!needle) {
         return true;
@@ -523,8 +522,13 @@ tsApp.controller('SheetController', [ '$scope', '$cookies', '$http', '$filter', 
     $scope.search = function () {
       $scope.filteredItems = $filter('filter')($scope.allEntries, function (item) {
         for(var attr in item) {
-          if (searchMatch(item[attr], $scope.query))
-            return true;
+          //our item attr is going to be our value
+          //if it is null, this will throw an error. wrapped in a try catch to silently fail.
+          try{
+            if (searchMatch(item[attr], $scope.query)){
+              return true;
+            }
+          } catch(e) {}
         }
         return false;
       });
