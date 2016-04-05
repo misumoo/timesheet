@@ -165,6 +165,12 @@ if($task == "addTask") {
   $description = $request->taskdescription;
   echo addTask($description);
 } //task addProject
+
+if($task == "getAllEntries") {
+  $billed = true;
+  $data = getAllEntries($userid, $billed);
+  echo $data;
+} //lookupService
 #######################################################################################################################
 #####################################################END TASKS#########################################################
 #######################################################################################################################
@@ -666,8 +672,6 @@ function getTimes($userid, $date) {
     SELECT
       a.WeeklyID,
       a.Description,
-      #a.ServiceName,
-      #a.CustomerName,
       b.ServiceID,
       b.ServiceName,
       b.HourlyRate,
@@ -732,6 +736,62 @@ function getTimes($userid, $date) {
   $data = array("success" => true, "records" => $data);
   return json_encode($data);
 } //getTimes
+
+/**
+ * @param $userid
+ * @return array
+ * This will return all of a users time entries.
+ */
+function getAllEntries($userid, $billed) {
+  $data = "";
+
+  $sql = "
+    SELECT
+      a.WeeklyID,
+      a.Description,
+      b.ServiceID,
+      b.ServiceName,
+      b.HourlyRate,
+      c.CustomerID,
+      c.CustomerName,
+      d.TimeID,
+      Date_Format(d.HourDate,'%Y-%m-%d') AS HourDate,
+      d.Hours
+    FROM tbl_timesheet a
+    LEFT JOIN tbl_services b
+      ON b.ServiceID = a.ServiceID
+    LEFT JOIN tbl_customers c
+      ON c.CustomerID = a.CustomerID
+    LEFT JOIN tbl_time d
+      ON d.WeeklyID = a.WeeklyID
+    WHERE a.UserID = '".$userid."'
+    ";
+
+  $mysqli = new mysqli(Database::dbserver, Database::dbuser, Database::dbpass, Database::dbname);
+  $rs = $mysqli->query($sql);
+
+  while($row = $rs->fetch_assoc()) {
+    $dbdata = array(
+      "TimeID" => $row['TimeID'],
+      "WeeklyID" => $row['WeeklyID'],
+      "Description" => $row['Description'],
+      "ServiceID" => $row['ServiceID'],
+      "Service" => $row['ServiceName'],
+      "CustomerID" => $row['CustomerID'],
+      "Customer" => $row['CustomerName'],
+      "HourlyRate" => $row['HourDate'],
+      "InvoiceNumber" => NULL,
+    );
+
+    $data[] = $dbdata; //push our data into the $data object
+  }
+
+  $rs->free();
+  $mysqli->close();
+
+  $data = array("success" => true, "records" => $data);
+  return json_encode($data);
+}
 
 function deleteRow($userid, $weeklyid) {
   $mysqli = new mysqli(Database::dbserver, Database::dbuser, Database::dbpass, Database::dbname);

@@ -184,6 +184,7 @@ tsApp.controller('SheetController', [ '$scope', '$cookies', '$http', '$filter', 
       $scope.getServices();
       $scope.getTimes();
       $scope.todayAdd();
+      $scope.generateAllEntries();
     }; //setup
 
     $scope.trigger = function(index) {
@@ -455,6 +456,7 @@ tsApp.controller('SheetController', [ '$scope', '$cookies', '$http', '$filter', 
       $("#" + id).modal(event);
     };
 
+    // When the dialogs pop up, focus on the first input
     $('#dialogAddService').on('shown.bs.modal', function () {
       $('#servicename').focus();
     });
@@ -467,17 +469,37 @@ tsApp.controller('SheetController', [ '$scope', '$cookies', '$http', '$filter', 
      * Bootstrap/AngularJS sort/filter table
      * http://www.bootply.com/jIEfKezm84
      */
-    var generateData = function(){
-      var arr = [];
-      var letterWords = ["alpha","bravo","charlie","daniel","earl","fish","grace","henry","ian","jack","karen","mike","delta","alex","larry","bob","zelda"]
-      for (var i=1;i<60;i++){
-        var id = letterWords[Math.floor(Math.random()*letterWords.length)];
-        arr.push({"id":id+i,"name":"name "+i,"description":"Description of item #"+i,"field3":id,"field4":"Some stuff about rec: "+i,"field5":"field"+i});
+    $scope.generateAllEntries = function() {
+      var data = [];
+      var cancelprocess = false;
+
+      if(!cancelprocess) {
+        $http.post(serviceBase, {
+          task: "getAllEntries"
+        }).success(function(response) {
+          $scope.trigger();
+          if(response.message == "No userid or token") {
+            //we're not logged in
+            console.log("Issue - " + response.message);
+            $location.path('/login');
+          }
+
+          if(response.success) {
+            if(response.records != "") {
+              $scope.allEntries = response.records;
+              //This is already thrown a filter as all of that is preprocessed, so this will reset the search allowing all records to display.
+              $scope.search();
+            } else {
+              $scope.allEntries = "";
+            }
+          }
+        }).error(function() {
+          alert("Error retrieving records");
+        });
       }
-      return arr;
     };
 
-    var sortingOrder = 'name'; //default sort
+    var sortingOrder = 'id'; //default sort
 
     $scope.sortingOrder = sortingOrder;
     $scope.pageSizes = [5,10,25,50];
@@ -487,7 +509,7 @@ tsApp.controller('SheetController', [ '$scope', '$cookies', '$http', '$filter', 
     $scope.itemsPerPage = 10;
     $scope.pagedItems = [];
     $scope.currentPage = 0;
-    $scope.items = generateData();
+    $scope.allEntries = "";
 
 
     var searchMatch = function (haystack, needle) {
@@ -499,7 +521,7 @@ tsApp.controller('SheetController', [ '$scope', '$cookies', '$http', '$filter', 
 
     // init the filtered items
     $scope.search = function () {
-      $scope.filteredItems = $filter('filter')($scope.items, function (item) {
+      $scope.filteredItems = $filter('filter')($scope.allEntries, function (item) {
         for(var attr in item) {
           if (searchMatch(item[attr], $scope.query))
             return true;
@@ -535,8 +557,8 @@ tsApp.controller('SheetController', [ '$scope', '$cookies', '$http', '$filter', 
 
     $scope.deleteItem = function (idx) {
       var itemToDelete = $scope.pagedItems[$scope.currentPage][idx];
-      var idxInItems = $scope.items.indexOf(itemToDelete);
-      $scope.items.splice(idxInItems,1);
+      var idxInItems = $scope.allEntries.indexOf(itemToDelete);
+      $scope.allEntries.splice(idxInItems,1);
       $scope.search();
 
       return false;
@@ -582,25 +604,4 @@ tsApp.controller('SheetController', [ '$scope', '$cookies', '$http', '$filter', 
       $scope.sortingOrder = newSortingOrder;
     };
 
-  }]); //SheetController
-
-//tsApp.directive("modalShow", function ($parse) {
-//  return {
-//    restrict: "A",
-//    link: function (scope, element, attrs) {
-//      //Hide or show the modal
-//      scope.showModal = function (visible, elem) {
-//        if (!elem)
-//          elem = element;
-//        if (visible)
-//          $(elem).modal("show");
-//        else
-//          $(elem).modal("hide");
-//        };
-//      //Watch for changes to the modal-visible attribute
-//      scope.toggleModal = function() {
-//        scope.showModal(true);
-//      };
-//    }
-//  };
-//});
+}]); //SheetController
