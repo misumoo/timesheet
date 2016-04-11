@@ -237,7 +237,7 @@ tsApp.controller('SheetController', [ '$scope', '$cookies', '$http', '$filter', 
       }).success(function(response) {
         if(response.success) {
           $scope.getTimes();
-          $scope.search();
+          $scope.generateAllEntries();
         } else {
           alert("Error deleting row");
         }
@@ -293,7 +293,8 @@ tsApp.controller('SheetController', [ '$scope', '$cookies', '$http', '$filter', 
           $scope.add_Hours = null;
           $scope.add_Desc = null;
           $scope.getTimes();
-          $scope.toggleModal('dialogAddTime', 'close');
+          $scope.generateAllEntries();
+          $scope.toggleModal('dialogAddTime');
         }).error(function() {
           alert("Save unsuccessful, please try again.");
         });
@@ -474,8 +475,8 @@ tsApp.controller('SheetController', [ '$scope', '$cookies', '$http', '$filter', 
       console.log("Ping!");
     };
 
-    $scope.toggleModal = function(id, event) {
-      $("#" + id).modal(event);
+    $scope.toggleModal = function(id) {
+      $("#" + id).modal('toggle');
     };
 
     // When the dialogs pop up, focus on the first input

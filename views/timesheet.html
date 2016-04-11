@@ -16,7 +16,7 @@
             </p>
           </div> <!-- datepicker -->
         </div> <!-- DatePickerController -->
-        <div ng-click="toggleModal('dialogAddTime', 'show')" role="button" class="btn btn-default addRow">Add a row</div>
+        <div ng-click="toggleModal('dialogAddTime')" role="button" class="btn btn-default addRow">Add a row</div>
       </section>
 
       <section>
@@ -211,7 +211,7 @@
             <div class="row">
               <div class="col-lg-4">
                 <div class="form-group">
-                  <label for="add_Customer">Customer: <img src="_images/add.png" class="addButton" ng-click="toggleModal('dialogAddCustomer', 'show')" ></label>
+                  <label for="add_Customer">Customer: <img src="_images/add.png" class="addButton" ng-click="toggleModal('dialogAddCustomer')" ></label>
                   <select id="add_Customer"
                           ng-model="selectCustomers"
                           ng-options="option.CustomerName for option in customers track by option.CustomerID"
@@ -220,7 +220,7 @@
               </div>
               <div class="col-lg-4">
                 <div class="form-group">
-                  <label for="add_Service">Service: <img src="_images/add.png" class="addButton" ng-click="toggleModal('dialogAddService', 'show')" ></label>
+                  <label for="add_Service">Service: <img src="_images/add.png" class="addButton" ng-click="toggleModal('dialogAddService')" ></label>
                   <select id="add_Service"
                           ng-model="selectServices"
                           ng-options="option.ServiceName for option in services track by option.ServiceID"
