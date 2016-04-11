@@ -73,6 +73,12 @@ if($task == "deleteRow") {
   echo json_encode($data);
 } //task deleteRow
 
+if($task == "deleteSingle") {
+  $timeid = $request->timeid;
+  $data = deleteSingle($userid, $timeid);
+  echo json_encode($data);
+} //task deleteSingle
+
 if($task == "login") {
   $username = $request->email;
   $userpass = $request->password;
@@ -175,11 +181,12 @@ if($task == "getAllEntries") {
 #####################################################END TASKS#########################################################
 #######################################################################################################################
 
-
-
-#######################################################################################################################
-#######################################################FUNCTIONS#######################################################
-#######################################################################################################################
+/**
+ * @param $userid
+ * @param $service
+ * @return object
+ * Look up a service id by name.
+ */
 function lookupService($userid, $service) {
   $data = "";
   $serviceid = "";
@@ -205,6 +212,13 @@ function lookupService($userid, $service) {
   return json_encode($data);
 }
 
+/**
+ * @param $description
+ * @param $weeklyid
+ * @param $userid
+ * @return object
+ * Update a description.
+ */
 function saveDescription($description, $weeklyid, $userid) {
   $task = "update";
 
@@ -225,6 +239,14 @@ function saveDescription($description, $weeklyid, $userid) {
   return json_encode($data);
 } //saveDescription
 
+/**
+ * @param $service
+ * @param $serviceid
+ * @param $weeklyid
+ * @param $userid
+ * @return object
+ * Update a service.
+ */
 function saveService($service, $serviceid, $weeklyid, $userid) {
   $service = convertForInsert($service);
   $serviceid = convertForInsert($serviceid);
@@ -246,6 +268,14 @@ function saveService($service, $serviceid, $weeklyid, $userid) {
   return json_encode($data);
 } //saveService
 
+/**
+ * @param $customer
+ * @param $customerid
+ * @param $weeklyid
+ * @param $userid
+ * @return object
+ * Saves a customer.
+ */
 function saveCustomer($customer, $customerid, $weeklyid, $userid) {
   $customer = convertForInsert($customer);
   $customerid = convertForInsert($customerid);
@@ -267,6 +297,15 @@ function saveCustomer($customer, $customerid, $weeklyid, $userid) {
   return json_encode($data);
 } //saveCustomer
 
+/**
+ * @param $weeklyid
+ * @param $userid
+ * @param $date
+ * @param $hours
+ * @param $timeid
+ * @return object
+ * The time control. Any updating that needs to be done this will do it. Add, insert, delete and update.
+ */
 function timeControl($weeklyid, $userid, $date, $hours, $timeid) {
   $sql = "";
 
@@ -328,6 +367,12 @@ function timeControl($weeklyid, $userid, $date, $hours, $timeid) {
   return json_encode($data);
 } //timeControl
 
+/**
+ * @param $email
+ * @return object
+ * @throws phpmailerException
+ * Initiate a password reset. This will email the user with a token thrown in the database to allow them to reset.
+ */
 function resetInit($email) {
   $success = true;
   $msg = "";
@@ -364,17 +409,17 @@ function resetInit($email) {
   ';
 
   $mail = new PHPMailer;
-  //$mail->SMTPDebug = 3;                     // Enable verbose debug output
-  //$mail->SMTPDebug = 1;
+//  $mail->SMTPDebug = 3;                  // Enable verbose debug output
+//  $mail->SMTPDebug = 1;
 
-  $mail->isSMTP();                          // Set mailer to use SMTP
+  $mail->isSMTP();                         // Set mailer to use SMTP
 //  $mail->Mailer = 'smtp';
-//  $mail->Host = 'smtp.gmail.com';           // Specify main and backup SMTP servers
-//  $mail->SMTPAuth = true;                   // Enable SMTP authentication
+//  $mail->Host = 'smtp.gmail.com';        // Specify main and backup SMTP servers
+//  $mail->SMTPAuth = true;                // Enable SMTP authentication
 //  $mail->Username = Email::USER_NAME;    // SMTP username
-//  $mail->Password = Email::PASSWORD;          // SMTP password
-//  $mail->SMTPSecure = 'tls';                // Enable TLS encryption, `ssl` also accepted
-//  $mail->Port = 587;                        // TCP port to connect to
+//  $mail->Password = Email::PASSWORD;     // SMTP password
+//  $mail->SMTPSecure = 'tls';             // Enable TLS encryption, `ssl` also accepted
+//  $mail->Port = 587;                     // TCP port to connect to
 
   $mail->SetFrom(Email::USER_NAME, 'Timesheet');
 
@@ -395,6 +440,12 @@ function resetInit($email) {
   return json_encode($data);
 } //resetInit
 
+/**
+ * @param $email
+ * @param $confirmationcode
+ * @param $password
+ * @return object
+ */
 function resetDo($email, $confirmationcode, $password) {
   $success = true;
   $msg = "";
@@ -433,6 +484,14 @@ function resetDo($email, $confirmationcode, $password) {
   return json_encode($data);
 } //resetDo
 
+/**
+ * @param $firstname
+ * @param $lastname
+ * @param $email
+ * @param $userpass
+ * @return bool|object
+ * Register a new user.
+ */
 function register($firstname, $lastname, $email, $userpass) {
   $success = true;
   $msg = "";
@@ -486,6 +545,12 @@ function register($firstname, $lastname, $email, $userpass) {
   return json_encode($data);
 } //register
 
+/**
+ * @param $username
+ * @param $userpass
+ * @return bool|object
+ * Login.
+ */
 function login($username, $userpass) {
   if($username == "" || $userpass == "") {
     return false;
@@ -521,6 +586,11 @@ function login($username, $userpass) {
   }
 } //login
 
+/**
+ * @param $userid
+ * @return object
+ * Get array of services.
+ */
 function getServices($userid) {
   $data = "";
   $msg = "";
@@ -553,6 +623,11 @@ function getServices($userid) {
   return json_encode($data);
 } //getServices
 
+/**
+ * @param $userid
+ * @return object
+ * Get array of customers.
+ */
 function getCustomers($userid) {
   $data = "";
   $msg = "";
@@ -585,6 +660,11 @@ function getCustomers($userid) {
   return json_encode($data);
 } //getCustomers
 
+/**
+ * @param $userid
+ * @return mixed
+ * Generate a new weekly ID for this user.
+ */
 function getNewWeeklyID($userid) {
   $mysqli = new mysqli(Database::dbserver, Database::dbuser, Database::dbpass, Database::dbname);
 
@@ -600,6 +680,12 @@ function getNewWeeklyID($userid) {
   return $insertid;
 } //getNewWeeklyID
 
+/**
+ * @param $userid
+ * @param $customername
+ * @return mixed
+ * Add a Customer to the database.
+ */
 function addCustomer($userid, $customername) {
   $mysqli = new mysqli(Database::dbserver, Database::dbuser, Database::dbpass, Database::dbname);
 
@@ -616,6 +702,13 @@ function addCustomer($userid, $customername) {
   return $insertid;
 } //addCustomer
 
+/**
+ * @param $userid
+ * @param $servicename
+ * @param $hourlyrate
+ * @return mixed
+ * Add a service to the database.
+ */
 function addService($userid, $servicename, $hourlyrate) {
   $mysqli = new mysqli(Database::dbserver, Database::dbuser, Database::dbpass, Database::dbname);
 
@@ -633,6 +726,17 @@ function addService($userid, $servicename, $hourlyrate) {
   return $insertid;
 } //addService
 
+/**
+ * @param $userid
+ * @param $customerid
+ * @param $serviceid
+ * @param $hours
+ * @param $date
+ * @param $desc
+ * @param $weeklyid
+ * @return object
+ * Add a new time to the database.
+ */
 function insertNewTime($userid, $customerid, $serviceid, $hours, $date, $desc, $weeklyid) {
   $savedesc = saveDescription($desc, $weeklyid, $userid);
   $savecustomer = saveCustomer("", $customerid, $weeklyid, $userid);
@@ -655,6 +759,12 @@ function insertNewTime($userid, $customerid, $serviceid, $hours, $date, $desc, $
   return json_encode($data);
 } //insertNewTime
 
+/**
+ * @param $userid
+ * @param $date
+ * @return object
+ * Returns all of our times for the timesheet.
+ */
 function getTimes($userid, $date) {
   $data = "";
   $currentrecord = "";
@@ -739,7 +849,7 @@ function getTimes($userid, $date) {
 
 /**
  * @param $userid
- * @return array
+ * @return object
  * This will return all of a users time entries.
  */
 function getAllEntries($userid, $billed) {
@@ -794,6 +904,12 @@ function getAllEntries($userid, $billed) {
   return json_encode($data);
 }
 
+/**
+ * @param $userid
+ * @param $weeklyid
+ * @return object
+ * Delete a row, WeeklyID
+ */
 function deleteRow($userid, $weeklyid) {
   $mysqli = new mysqli(Database::dbserver, Database::dbuser, Database::dbpass, Database::dbname);
   $weeklyid = convertForInsert($weeklyid);
@@ -811,10 +927,46 @@ function deleteRow($userid, $weeklyid) {
   return $data;
 } //deleteRow
 
+/**
+ * @param $userid
+ * @param $timeid
+ * @return object
+ * Deletes a single record from our time table.
+ */
+function deleteSingle($userid, $timeid) {
+  $mysqli = new mysqli(Database::dbserver, Database::dbuser, Database::dbpass, Database::dbname);
+  $timeid = convertForInsert($timeid);
+  $userid = convertForInsert($userid);
+
+  $sql = "DELETE FROM tbl_time WHERE UserID = ".$userid." AND TimeID = ".$timeid;
+  $rs = $mysqli->query($sql);
+//  $rs->free();
+
+  //$sql = "DELETE FROM tbl_timesheet WHERE UserID = ".$userid." AND WeeklyID = ".$weeklyid;
+  //$rs = $mysqli->query($sql);
+//  $rs->free();
+
+  $data = array("success" => true, "TimeID" => $timeid);
+  return $data;
+} //deleteSingle
+
+/**
+ * @param $username
+ * @param $useremail
+ * @param $userpassword
+ * @param $firstname
+ * @param $lastname
+ * TODO: Create User. Actually not sure if this is needed as we have a register user already.
+ */
 function createUser($username, $useremail, $userpassword, $firstname, $lastname) {
 
 } //createUser
 
+/**
+ * @param $usertoken
+ * @return bool|string
+ * Get our UserID from our token. Token is generated on login and stored in cookies.
+ */
 function getUserIDFromToken($usertoken) {
   $userid = "";
   $usertoken = convertForInsert($usertoken);
@@ -837,6 +989,11 @@ function getUserIDFromToken($usertoken) {
   return $userid;
 } //getUserIDFromToken
 
+/**
+ * @param $userid
+ * @return string
+ * Generate a token to store in the database.
+ */
 function generateToken($userid) {
   $mysqli = new mysqli(Database::dbserver, Database::dbuser, Database::dbpass, Database::dbname);
   $token = bin2hex(openssl_random_pseudo_bytes(32));
@@ -853,6 +1010,11 @@ function generateToken($userid) {
   return $token;
 } //generateToken
 
+/**
+ * @param $str
+ * @return string
+ * Converts a string for insert. Escapes it, puts quotes around it. Nulls if it is nothing.
+ */
 function convertForInsert($str) {
   $mysqli = new mysqli(Database::dbserver, Database::dbuser, Database::dbpass, Database::dbname);
 
@@ -864,6 +1026,11 @@ function convertForInsert($str) {
   return $str;
 } //convertForInsert
 
+/**
+ * @param $amt
+ * @return float|string
+ * Convert string/float to currency (***.**)
+ */
 function convertToCurrency($amt) {
   if($amt == "" || $amt == NULL || $amt == "NULL") {
     $amt = "0.00";
@@ -875,10 +1042,6 @@ function convertToCurrency($amt) {
     $amt = $amt.".00";
   }
 
-//  if(strpos($amt, "$") == false) {
-//    $amt = "$".$amt;
-//  }
-
   if(strlen($amt) - strpos($amt, ".") == 2) {
     //add a 0 to the end
     $amt = $amt."0";
@@ -887,7 +1050,10 @@ function convertToCurrency($amt) {
   return $amt;
 } //convertToCurrency
 
-
+/**
+ * @return object
+ * Get task list from database.
+ */
 function getTasks() {
   $tasks = "";
   $dbdata = "";
@@ -909,6 +1075,11 @@ function getTasks() {
   return json_encode($data);
 } //getTasks
 
+/**
+ * @param $description
+ * @return object
+ * Add a task to the database.
+ */
 function addTask($description) {
   $description = convertForInsert($description);
 
@@ -924,6 +1095,11 @@ function addTask($description) {
   return json_encode($data);
 } //addTask
 
+/**
+ * @param $userid
+ * @return string
+ * Generate salt to add to a password before encrypting.
+ */
 function generateSalt($userid) {
   $randsalt = bin2hex(openssl_random_pseudo_bytes(4));
   //if we have to generate salt, we need to update it as well
@@ -936,11 +1112,23 @@ function generateSalt($userid) {
   return $randsalt;
 } //generateToken
 
+/**
+ * @param $pass
+ * @param $salt
+ * @return string
+ * Encrypt our password to sha256
+ */
 function encryptPassword($pass, $salt) {
   $encrypt = hash('sha256', $pass.$salt);
   return $encrypt;
-} //generateToken
+} //encryptPassword
 
+/**
+ * @param $pass
+ * @param $userid
+ * @return bool
+ * Update our password.
+ */
 function updatePassword($pass, $userid) {
   $sql = "UPDATE tbl_users SET Password = '".$pass."' WHERE UserID = '".$userid."'";
   $mysqli = new mysqli(Database::dbserver, Database::dbuser, Database::dbpass, Database::dbname);
@@ -949,21 +1137,5 @@ function updatePassword($pass, $userid) {
   $mysqli->close();
 
   return true;
-} //generateToken
-#######################################################################################################################
-####################################################END FUNCTIONS######################################################
-#######################################################################################################################
-
-//<!--<a href="#">Inbox <span class="badge">42</span></a>-->
-//<!---->
-//<!--<button class="btn btn-primary" type="button">-->
-//<!--  Messages <span class="badge">4</span>-->
-//<!--</button>-->
-//<!--<button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">-->
-//<!--  Launch demo modal-->
-//<!--</button>-->
-//<!---->
-//<!--<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" data-whatever="@123">Open modal for @123</button>-->
-//<!--<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" data-whatever="@open">Open modal for @open</button>-->
-//<!--<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" data-whatever="@getbootstrap">Open modal for @getbootstrap</button>-->
+} //updatePassword
 ?>

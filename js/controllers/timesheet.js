@@ -229,6 +229,7 @@ tsApp.controller('SheetController', [ '$scope', '$cookies', '$http', '$filter', 
       console.log($scope.timesheet['weekly_' + index].iM.$dirty);
     }; //resetForm
 
+    //Delete a row, whole weekly id
     $scope.deleteRow = function(index) {
       $http.post(serviceBase, {
         weeklyid: $scope.timesheet['weekly_' + index].WeeklyID.$modelValue,
@@ -236,6 +237,7 @@ tsApp.controller('SheetController', [ '$scope', '$cookies', '$http', '$filter', 
       }).success(function(response) {
         if(response.success) {
           $scope.getTimes();
+          $scope.search();
         } else {
           alert("Error deleting row");
         }
@@ -245,6 +247,24 @@ tsApp.controller('SheetController', [ '$scope', '$cookies', '$http', '$filter', 
       //console.log($scope.timesheet['weekly_' + index]);
       //console.log(JSON.stringify($scope.timesheet['weekly_' + index]));
     }; //deleteRow
+
+    //Delete a single record, one time id
+    $scope.deleteSingle = function(timeid, idxInItems) {
+      $http.post(serviceBase, {
+        timeid: timeid,
+        task: "deleteSingle"
+      }).success(function(response) {
+        if(response.success) {
+          $scope.getTimes();
+          $scope.allEntries.splice(idxInItems,1);
+          $scope.search();
+        } else {
+          alert("Error deleting record");
+        }
+      }).error(function() {
+        alert("Error deleting record");
+      });
+    }; //deleteSingle
 
     $scope.insertNewTime = function() {
       cancelProcess = false;
@@ -412,6 +432,8 @@ tsApp.controller('SheetController', [ '$scope', '$cookies', '$http', '$filter', 
             $scope.timesheet['weekly_' + index].iSu.$setPristine();
             (response.message == "insert" || response.message == "delete" ? $scope.times[index].SuTimeID = id : ""); break;
         }
+        //reload our big table with all records
+        $scope.generateAllEntries();
       }).error(function() {
         $scope.timesheet['weekly_' + index].$setDirty();
         alert("Save unsuccessful, please try again.");
@@ -499,9 +521,7 @@ tsApp.controller('SheetController', [ '$scope', '$cookies', '$http', '$filter', 
       }
     };
 
-    var sortingOrder = 'TimeDate'; //default sort
-
-    $scope.sortingOrder = sortingOrder;
+    $scope.sortingOrder = 'TimeDate'; //default sort
     $scope.reverse = true; //Sort ASC by default
     $scope.pageSizes = [5,10,25,50];
     $scope.filteredItems = [];
@@ -560,12 +580,13 @@ tsApp.controller('SheetController', [ '$scope', '$cookies', '$http', '$filter', 
     };
 
     $scope.deleteItem = function (idx) {
+      //Time ID
+      var timeId = $scope.pagedItems[$scope.currentPage][idx]["TimeID"];
+
       var itemToDelete = $scope.pagedItems[$scope.currentPage][idx];
       var idxInItems = $scope.allEntries.indexOf(itemToDelete);
-      $scope.allEntries.splice(idxInItems,1);
-      $scope.search();
 
-      return false;
+      $scope.deleteSingle(timeId, idxInItems);
     };
 
     $scope.range = function (start, end) {
