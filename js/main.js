@@ -32,9 +32,9 @@ tsApp.config(['$routeProvider', function($routeProvider) {
       templateUrl: 'views/timesheet.html',
       controller: 'SheetController'
     }).
-    when('/timesheetold', {
-      templateUrl: 'views/timesheetold.html',
-      controller: 'SheetController'
+    when('/invoice', {
+      templateUrl: 'views/invoice.html',
+      controller: 'InvoiceController'
     }).
     otherwise({
       redirectTo: '/home'

@@ -225,6 +225,57 @@ body {
 .pointer {
   cursor: pointer;
 }
+
+.reduced {
+  font-size: .92em;
+}
+
+.datadisplayellipsis {
+  height: 16px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+}
+
+.r0 {width: 30px;}
+.r1 {width: 40px;}
+.r2 {width: 80px;}
+.r3 {width: 130px;}
+.r4 {width: 130px;}
+.r5 {width: 170px;}
+.r6 {width: 50px;}
+.r7 {width: 20px;}
+
+.row3 {
+  width: 100px;
+}
+
+.row4 {
+  width: 100px;
+}
+
+.row5 {
+  width: 150px;
+}
+
+.row6 {
+  width: 40px;
+}
+
+.largemodal {
+  width: 750px;
+}
+
+.invoiceaddbody {
+  height: 320px;
+  overflow-y: auto;
+  display: block;
+}
+
+.nomargin {
+  margin: 0;
+}
 /******************************************************************/
 /**************************FANCY BUTTON****************************/
 /******************************************************************/
