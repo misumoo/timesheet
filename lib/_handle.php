@@ -173,7 +173,7 @@ if($task == "addTask") {
 } //task addProject
 
 if($task == "getAllEntries") {
-  $billed = true;
+  $billed = false;
   $data = getAllEntries($userid, $billed);
   echo $data;
 } //task getAllEntries
@@ -194,6 +194,12 @@ if($task == "saveInvoice") {
   $data = saveInvoice($userid, $invoiceid, $timeids);
   echo $data;
 } //task saveInvoice
+
+if($task == "loadInvoice") {
+  $invoiceid = $request->invoiceid;
+  $data = loadInvoice($userid, $invoiceid);
+  echo $data;
+} //task loadInvoice
 #######################################################################################################################
 #####################################################END TASKS#########################################################
 #######################################################################################################################
@@ -921,6 +927,8 @@ function getAllEntries($userid, $billed) {
     WHERE a.UserID = '".$userid."'
     ";
 
+  $sql .= ($billed == false ? " AND InvoiceID IS NULL" : "");
+
   $mysqli = new mysqli(Database::dbserver, Database::dbuser, Database::dbpass, Database::dbname);
   $rs = $mysqli->query($sql);
 
@@ -935,6 +943,7 @@ function getAllEntries($userid, $billed) {
       "Customer" => $row['CustomerName'],
       "TimeDate" => $row['HourDate'],
       "Hours" => $row['Hours'],
+      "HourlyRate" => $row['HourlyRate'],
       "InvoiceNumber" => NULL,
     );
 
@@ -970,6 +979,62 @@ function loadAllInvoices($userid) {
     $dbdata = array(
       "InvoiceID" => $row['InvoiceID'],
       "InvoiceNumber" => $row['InvoiceNumber'],
+    );
+
+    $data[] = $dbdata; //push our data into the $data object
+  }
+
+  $rs->free();
+  $mysqli->close();
+
+  $data = array("success" => true, "records" => $data);
+  return json_encode($data);
+}
+
+function loadInvoice($userid, $invoiceid) {
+  $data = "";
+  $userid = convertForInsert($userid);
+  $invoiceid = convertForInsert($invoiceid);
+
+  $sql = "
+    SELECT
+      a.WeeklyID,
+      a.Description,
+      b.ServiceID,
+      b.ServiceName,
+      b.HourlyRate,
+      c.CustomerID,
+      c.CustomerName,
+      d.TimeID,
+      Date_Format(d.HourDate,'%Y-%m-%d') AS HourDate,
+      d.Hours
+    FROM tbl_timesheet a
+    LEFT JOIN tbl_services b
+      ON b.ServiceID = a.ServiceID
+    LEFT JOIN tbl_customers c
+      ON c.CustomerID = a.CustomerID
+    LEFT JOIN tbl_time d
+      ON d.WeeklyID = a.WeeklyID
+    WHERE a.UserID = ".$userid."
+    AND InvoiceID = ".$invoiceid."
+    ";
+
+  $mysqli = new mysqli(Database::dbserver, Database::dbuser, Database::dbpass, Database::dbname);
+  $rs = $mysqli->query($sql);
+
+  while($row = $rs->fetch_assoc()) {
+    $dbdata = array(
+      "TimeID" => $row['TimeID'],
+      "WeeklyID" => $row['WeeklyID'],
+      "Description" => $row['Description'],
+      "ServiceID" => $row['ServiceID'],
+      "Service" => $row['ServiceName'],
+      "CustomerID" => $row['CustomerID'],
+      "Customer" => $row['CustomerName'],
+      "TimeDate" => $row['HourDate'],
+      "Hours" => $row['Hours'],
+      "HourlyRate" => $row['HourlyRate'],
+      "InvoiceNumber" => NULL
     );
 
     $data[] = $dbdata; //push our data into the $data object

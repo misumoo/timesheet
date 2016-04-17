@@ -36,6 +36,10 @@ tsApp.config(['$routeProvider', function($routeProvider) {
       templateUrl: 'views/invoice.html',
       controller: 'InvoiceController'
     }).
+    when('/invoice/:invoiceid', {
+      templateUrl: 'views/invoice.html',
+      controller: 'InvoiceController'
+    }).
     otherwise({
       redirectTo: '/home'
     });
