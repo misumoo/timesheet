@@ -2,9 +2,8 @@
  * Created by Misumoo on 4/11/2016.
  */
 
-
-tsApp.controller('InvoiceController', [ '$scope', '$cookies', '$http', '$filter', '$sce', '$location', '$timeout',
-  function($scope, $cookies, $http, $filter, $sce, $location, $timeout) {
+tsApp.controller('InvoiceController', [ '$scope', '$cookies', '$http', '$filter', '$sce', '$location', '$timeout', '$routeParams',
+  function($scope, $cookies, $http, $filter, $sce, $location, $timeout, $routeParams) {
 
     var serviceBase = 'lib/_handle.php';
 
@@ -19,15 +18,22 @@ tsApp.controller('InvoiceController', [ '$scope', '$cookies', '$http', '$filter'
 
     $scope.invoicelist = [];
     $scope.toslice = [];
-    $scope.invoiceid = "";
+    var invoiceid = $routeParams.invoiceid;
+    $scope.invoiceid = (invoiceid != "" && invoiceid != undefined ? invoiceid : "");
     $scope.today = ($filter('date')(new Date(), 'MM/dd/yyyy'));
     $scope.invoicetotal = "TODO";
 
     $scope.setup = function() {
       $scope.fetchAllTimes();
-      $scope.toggleModal('dialogAddToInvoice');
       $scope.setModalButton();
       $scope.loadAllInvoices();
+      if($scope.invoiceid != "") {
+        //we have an id! load the information
+        $scope.loadInvoice($scope.invoiceid);
+      } else {
+        //otherwise pop up the dialog to add to invoice
+        $scope.toggleModal('dialogAddToInvoice');
+      }
     }; //setup
 
     $scope.trigger = function(index) {
@@ -58,9 +64,9 @@ tsApp.controller('InvoiceController', [ '$scope', '$cookies', '$http', '$filter'
 
     $scope.save = function() {
       cancelprocess = $scope.invoicelist == "";
+      $scope['InvoiceForm'].$setPristine();
 
       //first we need an invoiceid
-      console.log($scope.invoiceid);
       if($scope.invoiceid == "") {
         //we do not have an invoice number, we need to generate one.
         $scope.generateInvoiceNumber();
@@ -102,9 +108,32 @@ tsApp.controller('InvoiceController', [ '$scope', '$cookies', '$http', '$filter'
         }
 
         $scope.saveInvoice();
+        $scope.loadAllInvoices();
       }).error(function() {
         alert("Error retrieving records");
       });
+    };
+
+    //this calculates the total of our invoice
+    $scope.calcTotal = function(){
+      var total = 0;
+      for(var i = 0; i < $scope.invoicelist.length; i++){
+        hourlyrate = parseFloat($scope.invoicelist[i].HourlyRate);
+        hours = parseFloat($scope.invoicelist[i].Hours);
+        total += (hourlyrate * hours);
+      }
+      return parseFloat(total).toFixed(2);
+    };
+
+    //this calculates the amount of a single row of our invoice
+    $scope.calcAmount = function(index){
+      var total = 0;
+
+      hourlyrate = parseFloat($scope.invoicelist[index].HourlyRate);
+      hours = parseFloat($scope.invoicelist[index].Hours);
+      total += (hourlyrate * hours);
+
+      return parseFloat(total).toFixed(2);
     };
 
     $scope.saveInvoice = function() {
@@ -160,6 +189,9 @@ tsApp.controller('InvoiceController', [ '$scope', '$cookies', '$http', '$filter'
       $($scope.toslice.reverse()).each(function(i, obj) {
         $scope.times.splice(obj,1);
       });
+
+      $scope.setModalButton();
+      $scope["invoice"]['InvoiceForm'].$setDirty();
     };
 
     $scope.selectRow = function(index) {
@@ -180,9 +212,20 @@ tsApp.controller('InvoiceController', [ '$scope', '$cookies', '$http', '$filter'
       $scope.setModalButton();
     };
 
+    $scope.wipe = function() {
+      $scope.invoicelist = [];
+      $scope.invoiceid = "";
+      $scope.fetchAllTimes();
+      $scope['InvoiceForm'].$setPristine();
+    };
+
     $scope.setModalButton = function() {
-      var checkboxes = $("input[class='checkadd']");
-      $("#addItems").attr("disabled", !checkboxes.is(":checked"));
+      // we just need a few ms for inputs to update before we test
+      $timeout(function() {
+        var checkboxes = $("input[class='checkadd']");
+        $("#addItems").attr("disabled", !checkboxes.is(":checked"));
+      }, 2);
+      $scope.trigger();
     };
 
     $scope.toggleCheckbox = function (id) {
@@ -220,6 +263,35 @@ tsApp.controller('InvoiceController', [ '$scope', '$cookies', '$http', '$filter'
           alert("Error retrieving records");
         });
       }
+    };
+
+    $scope.loadInvoice = function(invoiceid) {
+      $scope.invoiceid = invoiceid;
+      $http.post(serviceBase, {
+        task: "loadInvoice",
+        invoiceid: $scope.invoiceid
+      }).success(function(response) {
+        $scope.trigger();
+        if(response.message == "No userid or token") {
+          //we're not logged in
+          console.log("Issue - " + response.message);
+          $location.path('/login');
+        }
+
+        if(response.success) {
+          if(response.records != "") {
+            $scope.invoicelist = response.records;
+          } else {
+            $scope.invoicelist = "";
+          }
+        }
+
+        $scope['InvoiceForm'].$setPristine();
+        
+        $("#dialogInvoices").modal("hide");
+      }).error(function() {
+        alert("Error retrieving records");
+      });
     };
 
     $scope.loadAllInvoices = function() {
