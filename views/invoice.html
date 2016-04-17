@@ -76,7 +76,7 @@
               <td>{{x.Description}}</td>
               <td>{{x.Hours}}</td>
               <td>{{x.HourlyRate}}</td>
-              <td>{{x.Amount}}</td>
+              <td>{{ calcAmount($index) }}</td>
               <td></td>
             </tr>
           </tbody>
@@ -88,7 +88,7 @@
               <td></td>
               <td></td>
               <td class="text-right"><strong>Total:</strong></td>
-              <td>{{invoicetotal}}</td>
+              <td>{{ calcTotal() }}</td>
               <td></td>
             </tr>
           </tfoot>
