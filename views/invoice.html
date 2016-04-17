@@ -3,13 +3,133 @@
   <form name="invoice">
 
     <section class="vertspacer">
-      <button ng-click="toggleModal('dialogAddToInvoice')">Add more time.</button>
-      <div class="row">
-        <div ng-repeat="x in invoicelist">
-          {{x.TimeID}}
+      <button ng-click="toggleModal('dialogInvoices')">Open Invoice</button>
+      <button ng-click="toggleModal('dialogAddToInvoice')">Add Time</button>
+      <button ng-click="save()">Save</button>
+      <div class="invoice">
+        <div class="row">
+          <div class="col-xs-1 text-right">
+            <strong>From:</strong>
+          </div>
+          <div class="col-xs-3">
+            <address>
+              <strong>Company/person name</strong><br>
+              Address1<br>
+              Address2<br>
+              City, State, Zip<br>
+              <abbr title="Phone">P:</abbr> (123) 456-7890
+            </address>
+          </div>
+          <div class="col-xs-4">Logo</div>
+          <div class="col-xs-3">
+            <strong>Invoice number:</strong> <input class="invoicenumber" ng-model="invoicenumber" disabled /><br>
+            <strong>Date:</strong> {{today}}
+          </div>
+          <div class="col-xs-1"></div>
         </div>
+        <div class="row">
+          <div class="col-xs-1 text-right">
+            <strong>To:</strong>
+          </div>
+          <div class="col-xs-10">
+            <address>
+              <strong>Company/person name</strong><br>
+              Address1<br>
+              Address2<br>
+              City, State, Zip<br>
+              <abbr title="Phone">P:</abbr> (123) 456-7890
+            </address>
+          </div>
+          <div class="col-xs-1"></div>
+        </div>
+        <table class="table table-striped table-hover reduced nomargin invoicetable">
+          <thead>
+            <tr>
+              <th class="col-xs-1"></th>
+              <th class="col-xs-1">Date</th>
+              <th class="col-xs-2">Service</th>
+              <th class="col-xs-4">Description</th>
+              <th class="col-xs-1">Hours</th>
+              <th class="col-xs-1">Rate</th>
+              <th class="col-xs-1">Amount</th>
+              <th class="col-xs-1"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="x in invoicelist">
+              <td class="text-center">
+                <div class="noPrint">
+                  <button class="tsbutton" title="Delete" name="delete" ng-disabled="true">
+                    <i class="fa fa-trash"></i>
+                  </button>
+                </div>
+              </td>
+              <td>{{x.TimeDate}}</td>
+              <td>{{x.Service}}</td>
+              <td>{{x.Description}}</td>
+              <td>{{x.Hours}}</td>
+              <td>{{x.Rate}}</td>
+              <td>{{x.Amount}}</td>
+              <td></td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td class="text-right"><strong>Total:</strong></td>
+              <td>{{invoicetotal}}</td>
+              <td></td>
+            </tr>
+          </tfoot>
+        </table> <!-- invoiceModal -->
       </div>
     </section>
+
+
+    <div id="dialogInvoices" class="modal fade" ng-form="InvoiceList">
+      <div class="modal-dialog largemodal">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title">All invoices.</h4>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <div>
+                <table class="table table-striped table-hover reduced nomargin">
+                  <thead>
+                    <tr>
+                      <th class="r0"></th>
+                      <th class="r1 InvoiceID">Id</th>
+                      <th class="Customer">Customer</th>
+                      <th class="r7"></th>
+                    </tr>
+                  </thead>
+                </table>
+              </div>
+              <div class="invoiceaddbody">
+                <table id="tbl_InvoiceList" class="table table-striped table-hover reduced nomargin">
+                  <tbody>
+                    <tr ng-repeat="x in invoices">
+                      <td class="pointer r0" ng-click="openInvoice($index)"></td>
+                      <td class="pointer r1" ng-click="openInvoice($index)"><div class="datadisplayellipsis row1">{{x.InvoiceID}}</div></td>
+                      <td class="pointer" ng-click="openInvoice($index)"><div class="datadisplayellipsis row3">{{x.Customer}}</div></td>
+                    </tr>
+                  </tbody>
+                </table> <!-- invoiceModal -->
+              </div> <!-- invoiceaddbody -->
+            </div> <!-- row -->
+          </div> <!-- modal-body -->
+          <div class="modal-footer">
+            <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+          </div>
+        </div><!-- modal-content -->
+      </div><!-- modal-dialog -->
+    </div><!-- dialogInvoices -->
 
     <div id="dialogAddToInvoice" class="modal fade" ng-form="AddToInvoice">
       <div class="modal-dialog largemodal">
@@ -37,7 +157,7 @@
                 </table>
               </div>
               <div class="invoiceaddbody">
-                <table id="invoiceModal" class="table table-striped table-hover reduced">
+                <table id="invoiceModal" class="table table-striped table-hover reduced nomargin">
                   <tbody>
                     <tr ng-repeat="x in times">
                       <td class="pointer r0" ng-click="selectRow($index)"><input class="checkadd" ng-click="selectRow($index)" id="chk_{{$index}}" type="checkbox"></td>
@@ -50,16 +170,16 @@
                     </tr>
                   </tbody>
                 </table> <!-- invoiceModal -->
-              </div> <!-- .invoiceaddbody -->
-            </div>
-          </div>
+              </div> <!-- invoiceaddbody -->
+            </div> <!-- row -->
+          </div> <!-- modal-body -->
           <div class="modal-footer">
             <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
             <button id="addItems" ng-model="addItems" ng-click="addItems()" class="btn btn-primary">Add Items</button>
           </div>
-        </div><!-- .modal-content -->
-      </div><!-- .modal-dialog -->
-    </div>
+        </div><!-- modal-content -->
+      </div><!-- modal-dialog -->
+    </div><!-- dialogAddToInvoice -->
 
   </form>
 

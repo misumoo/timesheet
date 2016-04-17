@@ -184,7 +184,7 @@ tsApp.controller('SheetController', [ '$scope', '$cookies', '$http', '$filter', 
       $scope.getServices();
       $scope.getTimes();
       $scope.todayAdd();
-      $scope.generateAllEntries();
+      $scope.fetchAllTimes();
     }; //setup
 
     $scope.trigger = function(index) {
@@ -237,7 +237,7 @@ tsApp.controller('SheetController', [ '$scope', '$cookies', '$http', '$filter', 
       }).success(function(response) {
         if(response.success) {
           $scope.getTimes();
-          $scope.generateAllEntries();
+          $scope.fetchAllTimes();
         } else {
           alert("Error deleting row");
         }
@@ -293,7 +293,7 @@ tsApp.controller('SheetController', [ '$scope', '$cookies', '$http', '$filter', 
           $scope.add_Hours = null;
           $scope.add_Desc = null;
           $scope.getTimes();
-          $scope.generateAllEntries();
+          $scope.fetchAllTimes();
           $scope.toggleModal('dialogAddTime');
         }).error(function() {
           alert("Save unsuccessful, please try again.");
@@ -434,7 +434,7 @@ tsApp.controller('SheetController', [ '$scope', '$cookies', '$http', '$filter', 
             (response.message == "insert" || response.message == "delete" ? $scope.times[index].SuTimeID = id : ""); break;
         }
         //reload our big table with all records
-        $scope.generateAllEntries();
+        $scope.fetchAllTimes();
       }).error(function() {
         $scope.timesheet['weekly_' + index].$setDirty();
         alert("Save unsuccessful, please try again.");
@@ -492,7 +492,7 @@ tsApp.controller('SheetController', [ '$scope', '$cookies', '$http', '$filter', 
      * Bootstrap/AngularJS sort/filter table
      * http://www.bootply.com/jIEfKezm84
      */
-    $scope.generateAllEntries = function() {
+    $scope.fetchAllTimes = function() {
       var data = [];
       var cancelprocess = false;
 

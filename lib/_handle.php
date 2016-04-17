@@ -176,7 +176,24 @@ if($task == "getAllEntries") {
   $billed = true;
   $data = getAllEntries($userid, $billed);
   echo $data;
-} //lookupService
+} //task getAllEntries
+
+if($task == "loadAllInvoices") {
+  $data = loadAllInvoices($userid);
+  echo $data;
+} //task loadAllInvoices
+
+if($task == "generateInvoiceNumber") {
+  $data = generateInvoiceNumber($userid);
+  echo $data;
+} //task generateInvoiceNumber
+
+if($task == "saveInvoice") {
+  $invoiceid = $request->invoiceid;
+  $timeids = $request->timeids;
+  $data = saveInvoice($userid, $invoiceid, $timeids);
+  echo $data;
+} //task saveInvoice
 #######################################################################################################################
 #####################################################END TASKS#########################################################
 #######################################################################################################################
@@ -238,6 +255,33 @@ function saveDescription($description, $weeklyid, $userid) {
   $data = array("message" => $task, "sql" => $sql);
   return json_encode($data);
 } //saveDescription
+
+/**
+ * @param $userid
+ * @param $invoiceid
+ * @param $timeids
+ * @return object
+ * Saves our invoice, this will update our times to set invoice id
+ */
+function saveInvoice($userid, $invoiceid, $timeids) {
+  $task = "update";
+
+  $invoiceid = convertForInsert($invoiceid);
+  $userid = convertForInsert($userid);
+  //$timeids = convertForInsert($timeids);
+
+  if($task == "update") {
+    $sql = "UPDATE `tbl_time` SET InvoiceID = ".$invoiceid." WHERE UserID = " . $userid . " AND TimeID IN (" . $timeids . ");";
+  }
+
+  $mysqli = new mysqli(Database::dbserver, Database::dbuser, Database::dbpass, Database::dbname);
+
+  $mysqli->query($sql);
+  $mysqli->close();
+
+  $data = array("message" => $task, "sql" => $sql);
+  return json_encode($data);
+}
 
 /**
  * @param $service
@@ -906,6 +950,40 @@ function getAllEntries($userid, $billed) {
 
 /**
  * @param $userid
+ * @return object
+ * Load all of the invoices from a user
+ */
+function loadAllInvoices($userid) {
+  $data = "";
+
+  $sql = "
+    SELECT
+      *
+    FROM tbl_invoices
+    WHERE UserID = '".$userid."'
+    ";
+
+  $mysqli = new mysqli(Database::dbserver, Database::dbuser, Database::dbpass, Database::dbname);
+  $rs = $mysqli->query($sql);
+
+  while($row = $rs->fetch_assoc()) {
+    $dbdata = array(
+      "InvoiceID" => $row['InvoiceID'],
+      "InvoiceNumber" => $row['InvoiceNumber'],
+    );
+
+    $data[] = $dbdata; //push our data into the $data object
+  }
+
+  $rs->free();
+  $mysqli->close();
+
+  $data = array("success" => true, "records" => $data);
+  return json_encode($data);
+}
+
+/**
+ * @param $userid
  * @param $weeklyid
  * @return object
  * Delete a row, WeeklyID
@@ -1094,6 +1172,26 @@ function addTask($description) {
   $data = array("success" => true, "id" => $insertid);
   return json_encode($data);
 } //addTask
+
+/**
+ * @param $userid
+ * @return object
+ *
+ */
+function generateInvoiceNumber($userid) {
+  $userid = convertForInsert($userid);
+
+  $sql = "INSERT INTO `tbl_invoices` (InvoiceID, UserID) VALUES (NULL, ".$userid.");";
+  $mysqli = new mysqli(Database::dbserver, Database::dbuser, Database::dbpass, Database::dbname);
+
+  $mysqli->query($sql);
+  $insertid = $mysqli->insert_id;
+
+  $mysqli->close();
+
+  $data = array("success" => true, "invoiceid" => $insertid);
+  return json_encode($data);
+}
 
 /**
  * @param $userid

@@ -19,10 +19,15 @@ tsApp.controller('InvoiceController', [ '$scope', '$cookies', '$http', '$filter'
 
     $scope.invoicelist = [];
     $scope.toslice = [];
+    $scope.invoiceid = "";
+    $scope.today = ($filter('date')(new Date(), 'MM/dd/yyyy'));
+    $scope.invoicetotal = "TODO";
 
     $scope.setup = function() {
-      $scope.generateAllEntries();
+      $scope.fetchAllTimes();
       $scope.toggleModal('dialogAddToInvoice');
+      $scope.setModalButton();
+      $scope.loadAllInvoices();
     }; //setup
 
     $scope.trigger = function(index) {
@@ -51,16 +56,97 @@ tsApp.controller('InvoiceController', [ '$scope', '$cookies', '$http', '$filter'
       console.log("Ping!");
     };
 
+    $scope.save = function() {
+      cancelprocess = $scope.invoicelist == "";
+
+      //first we need an invoiceid
+      console.log($scope.invoiceid);
+      if($scope.invoiceid == "") {
+        //we do not have an invoice number, we need to generate one.
+        $scope.generateInvoiceNumber();
+      } else {
+        $scope.saveInvoice();
+      }
+    };
+
+    //this loops through our current invoice list and gets all time ids, putting a comma between each
+    $scope.listInvoiceIds = function() {
+      var timeids = "";
+
+      $($scope.invoicelist).each(function() {
+        //this lists all of our time id's for our sql statement
+        timeids = timeids + (timeids != "" ? "," : "");
+        timeids = timeids + this.TimeID;
+      });
+
+      return timeids;
+    };
+
+    $scope.generateInvoiceNumber = function() {
+      $http.post(serviceBase, {
+        task: "generateInvoiceNumber"
+      }).success(function(response) {
+        $scope.trigger();
+        if(response.message == "No userid or token") {
+          //we're not logged in
+          console.log("Issue - " + response.message);
+          $location.path('/login');
+        }
+
+        if(response.success) {
+          if(response.invoiceid != "") {
+            $scope.invoiceid = response.invoiceid;
+          } else {
+            $scope.invoiceid = "";
+          }
+        }
+
+        $scope.saveInvoice();
+      }).error(function() {
+        alert("Error retrieving records");
+      });
+    };
+
+    $scope.saveInvoice = function() {
+      var timeids = "";
+      timeids = $scope.listInvoiceIds();
+
+      if($scope.invoiceid == "") {
+        alert("An issue occured with saving - no invoice id");
+        return false;
+      }
+
+      $http.post(serviceBase, {
+        task: "saveInvoice",
+        invoiceid: $scope.invoiceid,
+        timeids: timeids
+      }).success(function(response) {
+        $scope.trigger();
+        if(response.message == "No userid or token") {
+          //we're not logged in
+          console.log("Issue - " + response.message);
+          $location.path('/login');
+        }
+
+        if(response.success) {
+          alert("Saved!");
+        }
+
+      }).error(function() {
+        alert("Error retrieving records");
+      });
+    };
+
     $scope.toggleModal = function(id) {
       $("#" + id).modal('toggle');
       $('.modal-backdrop').removeClass("modal-backdrop");
     };
 
     $scope.addItems = function() {
-      $scope.toslice = [];
+      $scope.toslice = []; //empty the array
+
       $("input[class='checkadd']").each(function(i, obj) {
         if($("#" + obj.id).is(':checked')) {
-          console.log(i);
           //then we need to add it to our other object
           $scope.invoicelist.push($scope.times[i]);
           //we need to splice it from this object
@@ -91,6 +177,7 @@ tsApp.controller('InvoiceController', [ '$scope', '$cookies', '$http', '$filter'
           $("#" + obj.id).prop( "checked", false );
         }
       });
+      $scope.setModalButton();
     };
 
     $scope.setModalButton = function() {
@@ -107,11 +194,7 @@ tsApp.controller('InvoiceController', [ '$scope', '$cookies', '$http', '$filter'
       }
     };
 
-    /**
-     * Bootstrap/AngularJS sort/filter table
-     * http://www.bootply.com/jIEfKezm84
-     */
-    $scope.generateAllEntries = function() {
+    $scope.fetchAllTimes = function() {
       var data = [];
       var cancelprocess = false;
 
@@ -131,6 +214,34 @@ tsApp.controller('InvoiceController', [ '$scope', '$cookies', '$http', '$filter'
               $scope.times = response.records;
             } else {
               $scope.times = "";
+            }
+          }
+        }).error(function() {
+          alert("Error retrieving records");
+        });
+      }
+    };
+
+    $scope.loadAllInvoices = function() {
+      var data = [];
+      var cancelprocess = false;
+
+      if(!cancelprocess) {
+        $http.post(serviceBase, {
+          task: "loadAllInvoices"
+        }).success(function(response) {
+          $scope.trigger();
+          if(response.message == "No userid or token") {
+            //we're not logged in
+            console.log("Issue - " + response.message);
+            $location.path('/login');
+          }
+
+          if(response.success) {
+            if(response.records != "") {
+              $scope.invoices = response.records;
+            } else {
+              $scope.invoices = "";
             }
           }
         }).error(function() {

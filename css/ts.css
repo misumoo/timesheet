@@ -1,5 +1,13 @@
 @import url(http://fonts.googleapis.com/css?family=Ubuntu:400,500,700,300);
 
+@media print
+{
+  .noPrint
+  {
+    display:none;
+  }
+}
+
 body {
   font-family: "Ubuntu", "Sans-serif";
   font-weight: 400;
@@ -267,14 +275,24 @@ body {
   width: 750px;
 }
 
+.nomargin {
+  margin: 0;
+}
+
 .invoiceaddbody {
   height: 320px;
   overflow-y: auto;
   display: block;
 }
 
-.nomargin {
-  margin: 0;
+.invoicenumber {
+  width: 140px;
+}
+
+.invoice {
+  padding: 25px 0;
+  background-color: white;
+  border: 1px solid black;
 }
 /******************************************************************/
 /**************************FANCY BUTTON****************************/
