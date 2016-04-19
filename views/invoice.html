@@ -153,7 +153,7 @@
                     <tr>
                       <th class="r0"><input id="chk_SelectAll" ng-click="selectAll()" type="checkbox" /></th>
                       <th class="r1 TimeID">Id</th>
-                      <th class="r2 TimeDate">TimeDate</th>
+                      <th class="r2 TimeDateConverted">Date</th>
                       <th class="r3 Customer">Customer</th>
                       <th class="r4 Service">Service</th>
                       <th class="r5 Description">Description</th>
@@ -169,7 +169,7 @@
                     <tr ng-repeat="x in times">
                       <td class="pointer r0" ng-click="selectRow($index)"><input class="checkadd" ng-click="selectRow($index)" id="chk_{{$index}}" type="checkbox"></td>
                       <td class="pointer r1" ng-click="selectRow($index)"><div class="datadisplayellipsis row1">{{x.TimeID}}</div></td>
-                      <td class="pointer r2" ng-click="selectRow($index)"><div class="datadisplayellipsis row2">{{x.TimeDate}}</div></td>
+                      <td class="pointer r2" ng-click="selectRow($index)"><div class="datadisplayellipsis row2">{{x.TimeDateConverted}}</div></td>
                       <td class="pointer r3" ng-click="selectRow($index)"><div class="datadisplayellipsis row3">{{x.Customer}}</div></td>
                       <td class="pointer r4" ng-click="selectRow($index)"><div class="datadisplayellipsis row4">{{x.Service}}</div></td>
                       <td class="pointer r5" ng-click="selectRow($index)"><div class="datadisplayellipsis row5">{{x.Description}}</div></td>

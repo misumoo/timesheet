@@ -287,7 +287,7 @@ tsApp.controller('InvoiceController', [ '$scope', '$cookies', '$http', '$filter'
         }
 
         $scope['InvoiceForm'].$setPristine();
-        
+
         $("#dialogInvoices").modal("hide");
       }).error(function() {
         alert("Error retrieving records");

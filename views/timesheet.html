@@ -77,48 +77,6 @@
         </table>
       </section>
 
-      <!--<section style="margin-top: 5px;">-->
-        <!--<table class="fancygrid">-->
-          <!--<thead>-->
-          <!--<tr>-->
-            <!--<th>Customer</th>-->
-            <!--<th>Service/item</th>-->
-            <!--<th>Description</th>-->
-            <!--<th>M<br />{{DateM}}</th>-->
-            <!--<th>Tu<br />{{DateTu}}</th>-->
-            <!--<th>W<br />{{DateW}}</th>-->
-            <!--<th>Th<br />{{DateTh}}</th>-->
-            <!--<th>F<br />{{DateF}}</th>-->
-            <!--<th>Sa<br />{{DateSa}}</th>-->
-            <!--<th>Su<br />{{DateSu}}</th>-->
-            <!--<th>Total</th>-->
-            <!--<th></th>-->
-          <!--</tr>-->
-          <!--</thead>-->
-          <!--<tbody>-->
-          <!--<tr ng-form="weekly_{{$index}}_2" ng-keypress="trigger($index)" ng-repeat="x in times">-->
-            <!--<td><div class="editable" ng-model="x.Customer" wid="{{x.WeeklyID}}" data-old-value="{{x.Customer}}">{{x.Customer}}</div></td>-->
-            <!--<td><div class="editable" ng-model="x.Service" wid="{{x.WeeklyID}}" data-old-value="{{x.Customer}}">{{x.Service}}</div></td>-->
-            <!--<td><div class="editable" ng-model="x.Description" wid="{{x.WeeklyID}}" data-old-value="{{x.Customer}}">{{x.Description}}</div></td>-->
-            <!--<td><div class="editable" ng-model="x.M" wid="{{x.WeeklyID}}" data-old-value="{{x.Customer}}">{{x.M}}</div></td>-->
-            <!--<td><div class="editable" ng-model="x.Tu" wid="{{x.WeeklyID}}" data-old-value="{{x.Customer}}">{{x.Tu}}</div></td>-->
-            <!--<td><div class="editable" ng-model="x.W" wid="{{x.WeeklyID}}" data-old-value="{{x.Customer}}">{{x.W}}</div></td>-->
-            <!--<td><div class="editable" ng-model="x.Th" wid="{{x.WeeklyID}}" data-old-value="{{x.Customer}}">{{x.Th}}</div></td>-->
-            <!--<td><div class="editable" ng-model="x.F" wid="{{x.WeeklyID}}" data-old-value="{{x.Customer}}">{{x.F}}</div></td>-->
-            <!--<td><div class="editable" ng-model="x.Sa" wid="{{x.WeeklyID}}" data-old-value="{{x.Customer}}">{{x.Sa}}</div></td>-->
-            <!--<td><div class="editable" ng-model="x.Su" wid="{{x.WeeklyID}}" data-old-value="{{x.Customer}}">{{x.Su}}</div></td>-->
-            <!--<td><div ng-model="x.Sum" wid="{{x.WeeklyID}}" data-old-value="{{x.Customer}}">{{x.Sum}}</div></td>-->
-            <!--<td>-->
-              <!--<button class="tsbutton" ng-disabled="weekly_{{$index}}.WeeklyID.$modelValue < 1" name="delete" title="Delete" ng-click="deleteRow($index)"><i class="fa fa-trash"></i></button>-->
-              <!--<div id="weekly_{{$index}}_hidables_2" style="display: none;">-->
-                <!--<input name="WeeklyID" ng-model="x.WeeklyID" />-->
-              <!--</div>-->
-            <!--</td>-->
-          <!--</tr> &lt;!&ndash; weekly_{{$index}} &ndash;&gt;-->
-          <!--</tbody>-->
-        <!--</table>-->
-      <!--</section>-->
-
       <section class="vertspacer">
         <div class="row">
           <div class="col-md-3">
@@ -135,26 +93,26 @@
         </div>
 
         <div class="row">
-          <table class="table table-striped table-hover">
-            <tbody>
+          <table class="table table-striped table-hover reduced">
+            <thead>
               <tr>
-                <th class="TimeID pointer"><a ng-click="sort_by('TimeID')">Id <i class="fa fa-sort"></i></a></th>
-                <th class="TimeDate pointer"><a ng-click="sort_by('TimeDate')">TimeDate <i class="fa fa-sort"></i></a></th>
-                <th class="Customer pointer"><a ng-click="sort_by('Customer')">Customer <i class="fa fa-sort"></i></a></th>
-                <th class="Service pointer"><a ng-click="sort_by('Service')">Service <i class="fa fa-sort"></i></a></th>
-                <th class="Description" title="non-sortable">Description</th>
-                <th class="Hours pointer"><a ng-click="sort_by('Hours')">Hours <i class="fa fa-sort"></i></a></th>
-                <th class="InvoiceNumber pointer"><a ng-click="sort_by('InvoiceNumber')">Invoice# <i class="fa fa-sort"></i></a></th>
-                <th></th>
+                <th class="TimeID pointer col-xs-1"><a ng-click="sort_by('TimeID')">Id <i class="fa fa-sort"></i></a></th>
+                <th class="TimeDate pointer col-xs-1 datadisplayellipsis"><a ng-click="sort_by('TimeDate')">TimeDate <i class="fa fa-sort"></i></a></th>
+                <th class="Customer pointer col-xs-2 datadisplayellipsis"><a ng-click="sort_by('Customer')">Customer <i class="fa fa-sort"></i></a></th>
+                <th class="Service pointer col-xs-2 datadisplayellipsis"><a ng-click="sort_by('Service')">Service <i class="fa fa-sort"></i></a></th>
+                <th class="Description col-xs-3 datadisplayellipsis" title="non-sortable">Description</th>
+                <th class="Hours pointer col-xs-1 datadisplayellipsis"><a ng-click="sort_by('Hours')">Hours <i class="fa fa-sort"></i></a></th>
+                <th class="InvoiceNumber pointer col-xs-1 datadisplayellipsis"><a ng-click="sort_by('InvoiceNumber')">Invoice# <i class="fa fa-sort"></i></a></th>
+                <th class="col-xs-1"></th>
               </tr>
-            </tbody>
+            </thead>
             <tbody>
               <tr ng-repeat="data in pagedItems[currentPage] | orderBy:sortingOrder:reverse">
                 <td>{{data.TimeID}}</td>
-                <td>{{data.TimeDate}}</td>
+                <td>{{data.TimeDateConverted}}</td>
                 <td>{{data.Customer}}</td>
                 <td>{{data.Service}}</td>
-                <td>{{data.Description}}</td>
+                <td class="nl2brhtml">{{data.Description}}</td>
                 <td>{{data.Hours}}</td>
                 <td>{{data.InvoiceNumber}}</td>
                 <td><button class="tsbutton" ng-click="deleteItem($index)" title="Delete" name="delete"><i class="fa fa-trash"></i></button><a class="pointer tsbutton"></a></td>

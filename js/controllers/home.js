@@ -7,7 +7,7 @@ tsApp.controller('HomeController', ['$scope', '$cookies', '$http', '$location',
     var serviceBase = 'lib/_handle.php';
 
     $scope.setup = function() {
-      $scope.getTasks();
+      //$scope.getTasks();
     }; //setup
 
     $scope.getTasks = function() {

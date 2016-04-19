@@ -69,13 +69,16 @@ if($task == "getTimes") {
 
 if($task == "deleteRow") {
   $weeklyid = $request->weeklyid;
+  $weeklyid = convertForInsert($weeklyid);
+  $userid = convertForInsert($userid);
   $data = deleteRow($userid, $weeklyid);
   echo json_encode($data);
 } //task deleteRow
 
 if($task == "deleteSingle") {
   $timeid = $request->timeid;
-  $data = deleteSingle($userid, $timeid);
+  $weeklyid = $request->weeklyid;
+  $data = deleteSingle($userid, $timeid, $weeklyid);
   echo json_encode($data);
 } //task deleteSingle
 
@@ -916,6 +919,7 @@ function getAllEntries($userid, $billed) {
       c.CustomerName,
       d.TimeID,
       Date_Format(d.HourDate,'%Y-%m-%d') AS HourDate,
+      Date_Format(d.HourDate,'%m/%d/%Y') AS HourDateConverted,
       d.Hours
     FROM tbl_timesheet a
     LEFT JOIN tbl_services b
@@ -924,10 +928,11 @@ function getAllEntries($userid, $billed) {
       ON c.CustomerID = a.CustomerID
     LEFT JOIN tbl_time d
       ON d.WeeklyID = a.WeeklyID
-    WHERE a.UserID = '".$userid."'
-    ";
+    WHERE a.UserID = ".$userid."
+  ";
 
   $sql .= ($billed == false ? " AND InvoiceID IS NULL" : "");
+  $sql .= " ORDER BY HourDate DESC";
 
   $mysqli = new mysqli(Database::dbserver, Database::dbuser, Database::dbpass, Database::dbname);
   $rs = $mysqli->query($sql);
@@ -942,6 +947,7 @@ function getAllEntries($userid, $billed) {
       "CustomerID" => $row['CustomerID'],
       "Customer" => $row['CustomerName'],
       "TimeDate" => $row['HourDate'],
+      "TimeDateConverted" => $row['HourDateConverted'],
       "Hours" => $row['Hours'],
       "HourlyRate" => $row['HourlyRate'],
       "InvoiceNumber" => NULL,
@@ -1052,11 +1058,10 @@ function loadInvoice($userid, $invoiceid) {
  * @param $weeklyid
  * @return object
  * Delete a row, WeeklyID
+ * These need to be converted for insert BEFORE sent to function.
  */
 function deleteRow($userid, $weeklyid) {
   $mysqli = new mysqli(Database::dbserver, Database::dbuser, Database::dbpass, Database::dbname);
-  $weeklyid = convertForInsert($weeklyid);
-  $userid = convertForInsert($userid);
 
   $sql = "DELETE FROM tbl_time WHERE UserID = ".$userid." AND WeeklyID = ".$weeklyid;
   $rs = $mysqli->query($sql);
@@ -1076,22 +1081,45 @@ function deleteRow($userid, $weeklyid) {
  * @return object
  * Deletes a single record from our time table.
  */
-function deleteSingle($userid, $timeid) {
+function deleteSingle($userid, $timeid, $weeklyid) {
   $mysqli = new mysqli(Database::dbserver, Database::dbuser, Database::dbpass, Database::dbname);
   $timeid = convertForInsert($timeid);
   $userid = convertForInsert($userid);
+  $weeklyid = convertForInsert($weeklyid);
 
   $sql = "DELETE FROM tbl_time WHERE UserID = ".$userid." AND TimeID = ".$timeid;
-  $rs = $mysqli->query($sql);
-//  $rs->free();
+  $mysqli->query($sql);
 
-  //$sql = "DELETE FROM tbl_timesheet WHERE UserID = ".$userid." AND WeeklyID = ".$weeklyid;
-  //$rs = $mysqli->query($sql);
-//  $rs->free();
+  $check = checkIfWeeklyIdUsed($userid, $weeklyid);
 
-  $data = array("success" => true, "TimeID" => $timeid);
+  $data = array("success" => true, "check" => $check);
   return $data;
 } //deleteSingle
+
+/**
+ * @param $userid
+ * @param $weeklyid
+ * @return string
+ * This will check if a weekly id is still in use. If it is not, it will delete the weekly id.
+ */
+function checkIfWeeklyIdUsed($userid, $weeklyid) {
+  $mysqli = new mysqli(Database::dbserver, Database::dbuser, Database::dbpass, Database::dbname);
+
+  $sql = "SELECT Count(WeeklyID) AS CountOfWeeklyID from tbl_time WHERE UserID = " . $userid . " AND WeeklyID = " . $weeklyid . " ";
+  $rs = $mysqli->query($sql);
+
+  while ($row = $rs->fetch_assoc()) {
+    $count = $row['CountOfWeeklyID'];
+    if($count < 1) {
+      //we need to delete this weeklyid, it is no longer used.
+      deleteRow($userid, $weeklyid);
+    }
+  }
+  $rs->free();
+  $mysqli->close();
+
+  return $sql;
+}
 
 /**
  * @param $username

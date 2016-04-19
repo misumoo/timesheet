@@ -2,169 +2,190 @@
   <div class="changelog-header">Changelog</div>
   <br />
 
-  <div>
-    <span class="changelog-day">Known bugs</span>
-    <ul class="changelog-entry">
-      <li>After login, top right section (Please login) does not update to "Welcome, name"</li>
-      <li>Sometimes lines will appear between each td on timesheet, most of the time not..</li>
-    </ul>
+  <div class="row">
+    <div class="col-xs-6">
+
+      <div>
+        <span class="changelog-day">April 19, 2016</span>
+        <ul class="changelog-entry">
+          <li>Work on formatting of table.</li>
+          <li>New lines break correctly.</li>
+          <li>Date formatted on Invoice and Timesheet.</li>
+          <li>Deleting is functional from the all entries section.</li>
+        </ul>
+      </div>
+
+      <div>
+        <span class="changelog-day">April 17, 2016</span>
+        <ul class="changelog-entry">
+          <li>Invoice - Row and total now calculate.</li>
+        </ul>
+      </div>
+
+      <div>
+        <span class="changelog-day">April 16, 2016</span>
+        <ul class="changelog-entry">
+          <li>Invoice - Save, insert/update.</li>
+          <li>Invoice - Loading works.</li>
+          <li>Invoice - Creating new works.</li>
+          <li>Invoice - Can load from url now.</li>
+          <li>Invoice, Timesheet - Unbilled items now only show if they have no invoice id.</li>
+          <li>Invoice - Leaving the page if the save button is enabled will throw an alert now.</li>
+        </ul>
+      </div>
+
+      <div>
+        <span class="changelog-day">April 15, 2016</span>
+        <ul class="changelog-entry">
+          <li>Work on invoice page.</li>
+        </ul>
+      </div>
+
+      <div>
+        <span class="changelog-day">April 11, 2016</span>
+        <ul class="changelog-entry">
+          <li>Documented all functions on handle page.</li>
+          <li>Added functionality to deleting from the All Entries table.</li>
+          <li>Fix issue with modals closing.</li>
+          <li>Deleting a record or updating a record should now fire off the All Entries table to requery.</li>
+        </ul>
+      </div>
+
+      <div>
+        <span class="changelog-day">April 5, 2016</span>
+        <ul class="changelog-entry">
+          <li>Error on nulls in the filter table now fixed try catch wrap with silent fail.</li>
+        </ul>
+      </div>
+
+      <div>
+        <span class="changelog-day">April 4, 2016</span>
+        <ul class="changelog-entry">
+          <li>Remove second table from the timesheet.</li>
+          <li>Replaced this table with an all entries table. Table is sortable and filterable.</li>
+          <li>Created query for returning all entries.</li>
+          <li>Display all entries in table using the sort filter table.</li>
+        </ul>
+      </div>
+
+      <div>
+        <span class="changelog-day">April 3, 2016</span>
+        <ul class="changelog-entry">
+          <li>Rewrote classes. Database and Email added. Hid from GitHub.</li>
+        </ul>
+      </div>
+
+      <div>
+        <span class="changelog-day">January 28, 2016</span>
+        <ul class="changelog-entry">
+          <li>Inserting a record from the new form works properly.</li>
+          <li>Tweaked some functions on the handle page.</li>
+          <li>New form now requires customer/service/hours.</li>
+        </ul>
+      </div>
+
+      <div>
+        <span class="changelog-day">January 27, 2016</span>
+        <ul class="changelog-entry">
+          <li>Ripped inserting new record out of modal and threw it on main page for now.</li>
+          <li>Fix up new record inserter, added customers and services.</li>
+          <li>Insert record is disabled unless form is dirty, insert sets pristine.</li>
+        </ul>
+      </div>
+
+      <div>
+        <span class="changelog-day">December 22, 2015</span>
+        <ul class="changelog-entry">
+          <li>Added reset password. Emails password, all attempts stored in database.</li>
+        </ul>
+      </div>
+
+      <div>
+        <span class="changelog-day">August 31, 2015</span>
+        <ul class="changelog-entry">
+          <li>User passwords are now hashed and salted. Old passwords removed.</li>
+          <li>Registering works with new password scheme.</li>
+        </ul>
+      </div>
+
+      <div>
+        <span class="changelog-day">August 28, 2015</span>
+        <ul class="changelog-entry">
+          <li>Save, Reset - disabled unless dirty.</li>
+          <li>Save - sets pristine, disabling button.</li>
+          <li>Delete - Enables/disables properly on new rows.</li>
+          <li>Styling timesheet.</li>
+          <li>Before exiting the page or changing the date, a check is set to see if any save buttons are enabled. Popup appears if there are.</li>
+          <li>If hitting no on datepicker alert, the date is set back to currently selected week and nothing happens.</li>
+          <li>Tasks now db driven. Able to be appended.</li>
+        </ul>
+      </div>
+
+      <div>
+        <span class="changelog-day">August 26, 2015</span>
+        <ul class="changelog-entry">
+          <li>Deploy to Creative Webworks.</li>
+          <li>Match both databases so I can do use wamp and not have to upload after every change.</li>
+          <li>If not logged in, timesheet will kick to login page.</li>
+          <li>Pretty up home page, play with colors.</li>
+          <li>Add known bugs/tasks.</li>
+          <li>Grey dotted outline that appears on buttons in the header removed.</li>
+        </ul>
+      </div>
+
+      <div>
+        <span class="changelog-day">August 25, 2015</span>
+        <ul class="changelog-entry">
+          <li>Registration now works.</li>
+          <li>Changed icons for each timesheet row, save reload and delete.</li>
+          <li>Styling timesheet.</li>
+        </ul>
+      </div>
+
+      <div>
+        <span class="changelog-day">August 24, 2015</span>
+        <ul class="changelog-entry">
+          <li>Added a Home page.</li>
+          <li>When on a page, the navigation lights up correctly.</li>
+          <li>Saving a customer and service are now just strings. Once skills are a bit better with angular, change to an auto complete.</li>
+          <li>Saving a row now checks to see if any fields are dirty. If dirty, it will save.</li>
+          <li>After saving is done, the row returns to a pristine state.</li>
+          <li>Adding a new row now inserts a record on save.</li>
+          <li>Cleaned up code.</li>
+          <li>Logging in now shows username on top right, login if not logged in.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="col-xs-6">
+      <div>
+        <span class="changelog-day">Known bugs//TODO</span>
+        <ul class="changelog-entry">
+          <li>After login, top right section (Please login) does not update to "Welcome, name"</li>
+          <li>Sometimes lines will appear between each td on timesheet, most of the time not..</li>
+          <li>Timesheet - Sum of week/total.</li>
+          <li>Timesheet - Toggle billed/unbilled on All Entries.</li>
+          <li>Timesheet - Reset.</li>
+          <li>Timesheet - Quick edit from All Entries.</li>
+          <li>Invoice - Delete functionality.</li>
+        </ul>
+      </div>
+    </div>
   </div>
 
-  <div>
-    <span class="changelog-day">Known tasks(database)</span><br />
-    <form ng-submit="addNewTask()">
-      <table class="simple">
-        <tr>
-          <td><textarea style="width: 355px;" name="taskdescription" ng-model="taskdescription"></textarea></td>
-          <td><button type="submit" name="addtask" title="Add A New Task" class="tsbutton"><i class="fa fa-plus"></i></button></td>
-        </tr>
-      </table>
-    </form>
-    <ul class="changelog-entry">
-      <li ng-repeat="x in tasks">
-        {{x.TaskDescription}}
-      </li>
-    </ul>
-  </div>
-
-  <div>
-    <span class="changelog-day">April 17, 2016</span>
-    <ul class="changelog-entry">
-      <li>Invoice - Row and total now calculate.</li>
-    </ul>
-  </div>
-
-  <div>
-    <span class="changelog-day">April 16, 2016</span>
-    <ul class="changelog-entry">
-      <li>Invoice - Save, insert/update.</li>
-      <li>Invoice - Loading works.</li>
-      <li>Invoice - Creating new works.</li>
-      <li>Invoice - Can load from url now.</li>
-      <li>Invoice, Timesheet - Unbilled items now only show if they have no invoice id.</li>
-      <li>Invoice - Leaving the page if the save button is enabled will throw an alert now.</li>
-    </ul>
-  </div>
-
-  <div>
-    <span class="changelog-day">April 15, 2016</span>
-    <ul class="changelog-entry">
-      <li>Work on invoice page.</li>
-    </ul>
-  </div>
-
-  <div>
-    <span class="changelog-day">April 11, 2016</span>
-    <ul class="changelog-entry">
-      <li>Documented all functions on handle page.</li>
-      <li>Added functionality to deleting from the All Entries table.</li>
-      <li>Fix issue with modals closing.</li>
-      <li>Deleting a record or updating a record should now fire off the All Entries table to requery.</li>
-    </ul>
-  </div>
-
-  <div>
-    <span class="changelog-day">April 5, 2016</span>
-    <ul class="changelog-entry">
-      <li>Error on nulls in the filter table now fixed try catch wrap with silent fail.</li>
-    </ul>
-  </div>
-
-  <div>
-    <span class="changelog-day">April 4, 2016</span>
-    <ul class="changelog-entry">
-      <li>Remove second table from the timesheet.</li>
-      <li>Replaced this table with an all entries table. Table is sortable and filterable.</li>
-      <li>Created query for returning all entries.</li>
-      <li>Display all entries in table using the sort filter table.</li>
-    </ul>
-  </div>
-
-  <div>
-    <span class="changelog-day">April 3, 2016</span>
-    <ul class="changelog-entry">
-      <li>Rewrote classes. Database and Email added. Hid from GitHub.</li>
-    </ul>
-  </div>
-
-  <div>
-    <span class="changelog-day">January 28, 2016</span>
-    <ul class="changelog-entry">
-      <li>Inserting a record from the new form works properly.</li>
-      <li>Tweaked some functions on the handle page.</li>
-      <li>New form now requires customer/service/hours.</li>
-    </ul>
-  </div>
-
-  <div>
-    <span class="changelog-day">January 27, 2016</span>
-    <ul class="changelog-entry">
-      <li>Ripped inserting new record out of modal and threw it on main page for now.</li>
-      <li>Fix up new record inserter, added customers and services.</li>
-      <li>Insert record is disabled unless form is dirty, insert sets pristine.</li>
-    </ul>
-  </div>
-
-  <div>
-    <span class="changelog-day">December 22, 2015</span>
-    <ul class="changelog-entry">
-      <li>Added reset password. Emails password, all attempts stored in database.</li>
-    </ul>
-  </div>
-
-  <div>
-    <span class="changelog-day">August 31, 2015</span>
-    <ul class="changelog-entry">
-      <li>User passwords are now hashed and salted. Old passwords removed.</li>
-      <li>Registering works with new password scheme.</li>
-    </ul>
-  </div>
-
-  <div>
-    <span class="changelog-day">August 28, 2015</span>
-    <ul class="changelog-entry">
-      <li>Save, Reset - disabled unless dirty.</li>
-      <li>Save - sets pristine, disabling button.</li>
-      <li>Delete - Enables/disables properly on new rows.</li>
-      <li>Styling timesheet.</li>
-      <li>Before exiting the page or changing the date, a check is set to see if any save buttons are enabled. Popup appears if there are.</li>
-      <li>If hitting no on datepicker alert, the date is set back to currently selected week and nothing happens.</li>
-      <li>Tasks now db driven. Able to be appended.</li>
-    </ul>
-  </div>
-
-  <div>
-    <span class="changelog-day">August 26, 2015</span>
-    <ul class="changelog-entry">
-      <li>Deploy to Creative Webworks.</li>
-      <li>Match both databases so I can do use wamp and not have to upload after every change.</li>
-      <li>If not logged in, timesheet will kick to login page.</li>
-      <li>Pretty up home page, play with colors.</li>
-      <li>Add known bugs/tasks.</li>
-      <li>Grey dotted outline that appears on buttons in the header removed.</li>
-    </ul>
-  </div>
-
-  <div>
-    <span class="changelog-day">August 25, 2015</span>
-    <ul class="changelog-entry">
-      <li>Registration now works.</li>
-      <li>Changed icons for each timesheet row, save reload and delete.</li>
-      <li>Styling timesheet.</li>
-    </ul>
-  </div>
-
-  <div>
-    <span class="changelog-day">August 24, 2015</span>
-    <ul class="changelog-entry">
-      <li>Added a Home page.</li>
-      <li>When on a page, the navigation lights up correctly.</li>
-      <li>Saving a customer and service are now just strings. Once skills are a bit better with angular, change to an auto complete.</li>
-      <li>Saving a row now checks to see if any fields are dirty. If dirty, it will save.</li>
-      <li>After saving is done, the row returns to a pristine state.</li>
-      <li>Adding a new row now inserts a record on save.</li>
-      <li>Cleaned up code.</li>
-      <li>Logging in now shows username on top right, login if not logged in.</li>
-    </ul>
-  </div>
+  <!--<div>-->
+    <!--<span class="changelog-day">Known tasks(database)</span><br />-->
+    <!--<form ng-submit="addNewTask()">-->
+      <!--<table class="simple">-->
+        <!--<tr>-->
+          <!--<td><textarea style="width: 355px;" name="taskdescription" ng-model="taskdescription"></textarea></td>-->
+          <!--<td><button type="submit" name="addtask" title="Add A New Task" class="tsbutton"><i class="fa fa-plus"></i></button></td>-->
+        <!--</tr>-->
+      <!--</table>-->
+    <!--</form>-->
+    <!--<ul class="changelog-entry">-->
+      <!--<li ng-repeat="x in tasks">-->
+        <!--{{x.TaskDescription}}-->
+      <!--</li>-->
+    <!--</ul>-->
+  <!--</div>-->
 </div>

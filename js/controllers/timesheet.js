@@ -249,21 +249,25 @@ tsApp.controller('SheetController', [ '$scope', '$cookies', '$http', '$filter', 
     }; //deleteRow
 
     //Delete a single record, one time id
-    $scope.deleteSingle = function(timeid, idxInItems) {
-      $http.post(serviceBase, {
-        timeid: timeid,
-        task: "deleteSingle"
-      }).success(function(response) {
-        if(response.success) {
-          $scope.getTimes();
-          $scope.allEntries.splice(idxInItems,1);
-          $scope.search();
-        } else {
+    $scope.deleteSingle = function(timeid, weeklyid, idxInItems) {
+      var answer = confirm("Are you sure you want to delete this item?");
+      if (answer) {
+        $http.post(serviceBase, {
+          timeid: timeid,
+          weeklyid: weeklyid,
+          task: "deleteSingle"
+        }).success(function(response) {
+          if(response.success) {
+            $scope.getTimes();
+            $scope.allEntries.splice(idxInItems,1);
+            $scope.search();
+          } else {
+            alert("Error deleting record");
+          }
+        }).error(function() {
           alert("Error deleting record");
-        }
-      }).error(function() {
-        alert("Error deleting record");
-      });
+        });
+      }
     }; //deleteSingle
 
     $scope.insertNewTime = function() {
@@ -582,12 +586,13 @@ tsApp.controller('SheetController', [ '$scope', '$cookies', '$http', '$filter', 
 
     $scope.deleteItem = function (idx) {
       //Time ID
-      var timeId = $scope.pagedItems[$scope.currentPage][idx]["TimeID"];
+      var timeid = $scope.pagedItems[$scope.currentPage][idx]["TimeID"];
+      var weeklyid = $scope.pagedItems[$scope.currentPage][idx]["WeeklyID"];
 
       var itemToDelete = $scope.pagedItems[$scope.currentPage][idx];
       var idxInItems = $scope.allEntries.indexOf(itemToDelete);
 
-      $scope.deleteSingle(timeId, idxInItems);
+      $scope.deleteSingle(timeid, weeklyid, idxInItems);
     };
 
     $scope.range = function (start, end) {
