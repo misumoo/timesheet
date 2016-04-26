@@ -20,17 +20,17 @@
           </div>
           <div class="col-xs-3">
             <address>
-              <strong>Company/person name</strong><br>
-              Address1<br>
-              Address2<br>
-              City, State, Zip<br>
-              <abbr title="Phone">P:</abbr> (123) 456-7890
+              <strong>{{ Company }}</strong><br>
+              {{ Address1 }}<br>
+              {{ Address2 }}<br>
+              {{ City }}, {{ State }}, {{ Zip }}<br>
+              <abbr title="Phone">P:</abbr> {{ Phone }}
             </address>
           </div>
           <div class="col-xs-4">Logo</div>
           <div class="col-xs-3">
             <strong>Invoice number:</strong> <input class="invoiceid" ng-model="invoiceid" disabled /><br>
-            <strong>Date:</strong> {{today}}
+            <strong>Invoice Date:</strong> {{today}}
           </div>
           <div class="col-xs-1"></div>
         </div>
@@ -40,11 +40,11 @@
           </div>
           <div class="col-xs-10">
             <address>
-              <strong>Company/person name</strong><br>
-              Address1<br>
-              Address2<br>
-              City, State, Zip<br>
-              <abbr title="Phone">P:</abbr> (123) 456-7890
+              <strong>{{ toCompany }}</strong><br>
+              {{ toAddress1 }}<br>
+              {{ toAddress2 }}<br>
+              {{ toCity }}, {{ toState }}, {{ toZip }}<br>
+              <abbr title="Phone">P:</abbr> {{ toPhone }}
             </address>
           </div>
           <div class="col-xs-1"></div>
@@ -64,6 +64,13 @@
           </thead>
           <tbody>
             <tr ng-repeat="x in invoicelist">
+              <td></td>
+              <td>{{x.TimeDateConverted}}</td>
+              <td>{{x.Service}}</td>
+              <td class="nl2brhtml">{{x.Description}}</td>
+              <td>{{x.Hours}}</td>
+              <td>{{x.HourlyRate}}</td>
+              <td>{{ calcAmount($index) }}</td>
               <td class="text-center">
                 <div class="noPrint">
                   <button class="tsbutton" title="Delete" name="delete" ng-disabled="true">
@@ -71,13 +78,6 @@
                   </button>
                 </div>
               </td>
-              <td>{{x.TimeDate}}</td>
-              <td>{{x.Service}}</td>
-              <td>{{x.Description}}</td>
-              <td>{{x.Hours}}</td>
-              <td>{{x.HourlyRate}}</td>
-              <td>{{ calcAmount($index) }}</td>
-              <td></td>
             </tr>
           </tbody>
           <tfoot>
@@ -112,6 +112,7 @@
                     <tr>
                       <th class="r0"></th>
                       <th class="r1 InvoiceID">Id</th>
+                      <th class="r2 Date">Date</th>
                       <th class="Customer">Customer</th>
                       <th class="r7"></th>
                     </tr>
@@ -123,8 +124,9 @@
                   <tbody>
                     <tr ng-repeat="x in invoices">
                       <td class="pointer r0" ng-click="loadInvoice(x.InvoiceID)"></td>
-                      <td class="pointer r1" ng-click="loadInvoice(x.InvoiceID)"><div class="datadisplayellipsis row1">{{x.InvoiceID}}</div></td>
-                      <td class="pointer" ng-click="loadInvoice(x.InvoiceID)"><div class="datadisplayellipsis row3">{{x.Customer}}</div></td>
+                      <td class="pointer r0" ng-click="loadInvoice(x.InvoiceID)">{{x.InvoiceID}}</td>
+                      <td class="pointer r1" ng-click="loadInvoice(x.InvoiceID)"><div>{{x.InvoiceDateConverted}}</div></td>
+                      <td class="pointer" ng-click="loadInvoice(x.InvoiceID)"><div class="datadisplayellipsis">{{x.CustomerName}}</div></td>
                     </tr>
                   </tbody>
                 </table> <!-- invoiceModal -->

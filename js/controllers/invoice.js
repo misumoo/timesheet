@@ -16,17 +16,26 @@ tsApp.controller('InvoiceController', [ '$scope', '$cookies', '$http', '$filter'
       }
     });
 
-    $scope.invoicelist = [];
-    $scope.toslice = [];
     var invoiceid = $routeParams.invoiceid;
     $scope.invoiceid = (invoiceid != "" && invoiceid != undefined ? invoiceid : "");
+    $scope.invoicelist = [];
+    $scope.toslice = [];
     $scope.today = ($filter('date')(new Date(), 'MM/dd/yyyy'));
+    $scope.todayformatted = ($filter('date')(new Date(), 'yyyy-MM-dd'));
     $scope.invoicetotal = "TODO";
+    $scope.Company = "Company/person name";
+    $scope.Phone = "(123) 456-7890";
+    $scope.Address1 = "Address1";
+    $scope.Address2 = "Address2";
+    $scope.City = "City";
+    $scope.State = "State";
+    $scope.Zip = "Zip";
 
     $scope.setup = function() {
       $scope.fetchAllTimes();
       $scope.setModalButton();
       $scope.loadAllInvoices();
+      $scope.resetClientData();
       if($scope.invoiceid != "") {
         //we have an id! load the information
         $scope.loadInvoice($scope.invoiceid);
@@ -120,6 +129,8 @@ tsApp.controller('InvoiceController', [ '$scope', '$cookies', '$http', '$filter'
       for(var i = 0; i < $scope.invoicelist.length; i++){
         hourlyrate = parseFloat($scope.invoicelist[i].HourlyRate);
         hours = parseFloat($scope.invoicelist[i].Hours);
+        hourlyrate = (isNaN(hourlyrate) ? 0 : hourlyrate); //convert it to a 0 if it's not a number
+        hours = (isNaN(hours) ? 0 : hours); //convert it to a 0 if it's not a number
         total += (hourlyrate * hours);
       }
       return parseFloat(total).toFixed(2);
@@ -131,6 +142,8 @@ tsApp.controller('InvoiceController', [ '$scope', '$cookies', '$http', '$filter'
 
       hourlyrate = parseFloat($scope.invoicelist[index].HourlyRate);
       hours = parseFloat($scope.invoicelist[index].Hours);
+      hourlyrate = (isNaN(hourlyrate) ? 0 : hourlyrate); //convert it to a 0 if it's not a number
+      hours = (isNaN(hours) ? 0 : hours); //convert it to a 0 if it's not a number
       total += (hourlyrate * hours);
 
       return parseFloat(total).toFixed(2);
@@ -148,7 +161,9 @@ tsApp.controller('InvoiceController', [ '$scope', '$cookies', '$http', '$filter'
       $http.post(serviceBase, {
         task: "saveInvoice",
         invoiceid: $scope.invoiceid,
-        timeids: timeids
+        timeids: timeids,
+        invoicedate: $scope.todayformatted,
+        customerid: $scope.invoicelist[0].CustomerID //TODO: This should probably be static, though it will work for now.
       }).success(function(response) {
         $scope.trigger();
         if(response.message == "No userid or token") {
@@ -281,8 +296,16 @@ tsApp.controller('InvoiceController', [ '$scope', '$cookies', '$http', '$filter'
         if(response.success) {
           if(response.records != "") {
             $scope.invoicelist = response.records;
+            $scope.toCompany = response.contactdata.Company;
+            $scope.toPhone = response.contactdata.Phone;
+            $scope.toAddress1 = response.contactdata.Address1;
+            $scope.toAddress2 = response.contactdata.Address2;
+            $scope.toCity = response.contactdata.City;
+            $scope.toState = response.contactdata.State;
+            $scope.toZip = response.contactdata.Zip;
           } else {
             $scope.invoicelist = "";
+            $scope.resetClientData();
           }
         }
 
@@ -292,6 +315,16 @@ tsApp.controller('InvoiceController', [ '$scope', '$cookies', '$http', '$filter'
       }).error(function() {
         alert("Error retrieving records");
       });
+    };
+
+    $scope.resetClientData = function() {
+      $scope.toCompany = "";
+      $scope.toPhone = "";
+      $scope.toAddress1 = "";
+      $scope.toAddress2 = "";
+      $scope.toCity = "";
+      $scope.toState = "";
+      $scope.toZip = "";
     };
 
     $scope.loadAllInvoices = function() {

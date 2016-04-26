@@ -45,23 +45,76 @@ tsApp.config(['$routeProvider', function($routeProvider) {
     });
 }]);
 
-tsApp.controller('HeaderController', [ '$scope', '$cookies', '$http', '$location',
-  function($scope, $cookies, $http, $location) {
+tsApp.controller('HeaderController', [ '$scope', '$cookies', '$http', '$location', '$timeout',
+  function($scope, $cookies, $http, $location, $timeout) {
+
+    var serviceBase = 'lib/_handle.php';
 
     $scope.isActive = function (viewLocation) {
       return viewLocation === $location.path();
     };
 
     $scope.setupCookies = function() {
+      console.log($scope.loggedin);
       if($cookies.userfirstname != "" && $cookies.userfirstname !== undefined) {
-        $scope.loggedIn = true;
+        $scope.loggedin = true;
         $scope.username = $cookies.userfirstname;
       } else {
-        $scope.loggedIn = false;
+        $scope.loggedin = false;
         $scope.username = "";
       }
     };
 
+    $scope.logout = function() {
+      $cookies.userfirstname = "";
+      $cookies.usertoken = "";
+      $scope.setupCookies();
+    };
+
+    $scope.login = function() { //our submit button has been triggered -- form with ng-submit="login()"
+      //attempt to log in with username and email
+      $http.post(serviceBase, {
+        email: $scope.email,
+        password: $scope.password,
+        task: "login"
+      }).success(function(response) {
+        if(response.success == true) {
+          $cookies.usertoken = response.usertoken;
+          $cookies.userfirstname = response.userfirstname;
+          $scope.loggedin = true;
+          $scope.username = response.userfirstname;
+          $scope.setupCookies();
+          $timeout(function() {
+            $location.path('/timesheet');
+          }, 2);
+        } else {
+          alert("Invalid username/password");
+        }
+      }).error(function() {
+        alert("Error reaching server");
+      });
+    }; //login
+
     $scope.setupCookies();
 
 }]); //HeaderController
+
+tsApp.service('sharedProperties', function () {
+  var username = '';
+  var loggedin = false;
+
+  return {
+    getUsername: function () {
+      return username;
+    },
+    getLoggedIn: function () {
+      return loggedin;
+    },
+    setUsername: function(value) {
+      username = value;
+    },
+    setLoggedIn: function(value) {
+      loggedin = value;
+    }
+  };
+});

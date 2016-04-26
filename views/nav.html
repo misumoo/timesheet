@@ -9,15 +9,14 @@
           <li ng-class="{ active: isActive('/home')}"><a ng-href="#/home">Home</a></li>
           <li ng-class="{ active: isActive('/timesheet')}"><a ng-href="#/timesheet">Timesheet</a></li>
           <li ng-class="{ active: isActive('/invoice')}"><a ng-href="#/invoice">Invoice</a></li>
-          <!--<li ng-class="{ active: isActive('/login')}"><a ng-href="#/login">Login</a></li>-->
         </ul>
       </div>
       <div id="navright" class="navbar-header pull-right">
-        <div class="navbar-brand" ng-show="loggedIn == true">
-          Welcome, {{username}} (logout)!
+        <div class="navbar-brand" ng-show="loggedin == true">
+          Welcome, {{username}} (<a ng-href="#/login" ng-click="logout()">logout</a>)!
         </div>
-        <div class="navbar-brand" ng-show="loggedIn == false">
-          Please <a  ng-href="#/login">login!</a>
+        <div class="navbar-brand" ng-show="loggedin == false">
+          Please <a ng-href="#/login">login!</a>
         </div>
       </div>
     </div><!-- navbar-container -->

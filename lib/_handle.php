@@ -194,7 +194,9 @@ if($task == "generateInvoiceNumber") {
 if($task == "saveInvoice") {
   $invoiceid = $request->invoiceid;
   $timeids = $request->timeids;
-  $data = saveInvoice($userid, $invoiceid, $timeids);
+  $invoicedate = $request->invoicedate;
+  $customerid = $request->customerid;
+  $data = saveInvoice($userid, $invoiceid, $timeids, $invoicedate, $customerid);
   echo $data;
 } //task saveInvoice
 
@@ -269,26 +271,26 @@ function saveDescription($description, $weeklyid, $userid) {
  * @param $userid
  * @param $invoiceid
  * @param $timeids
+ * @param $invoicedate
+ * @param $customerid
  * @return object
  * Saves our invoice, this will update our times to set invoice id
  */
-function saveInvoice($userid, $invoiceid, $timeids) {
-  $task = "update";
+function saveInvoice($userid, $invoiceid, $timeids, $invoicedate, $customerid) {
+  $mysqli = new mysqli(Database::dbserver, Database::dbuser, Database::dbpass, Database::dbname);
 
   $invoiceid = convertForInsert($invoiceid);
   $userid = convertForInsert($userid);
-  //$timeids = convertForInsert($timeids);
+  $invoicedate = convertForInsert($invoicedate);
+  $customerid = convertForInsert($customerid);
 
-  if($task == "update") {
-    $sql = "UPDATE `tbl_time` SET InvoiceID = ".$invoiceid." WHERE UserID = " . $userid . " AND TimeID IN (" . $timeids . ");";
-  }
-
-  $mysqli = new mysqli(Database::dbserver, Database::dbuser, Database::dbpass, Database::dbname);
-
+  $sql = "UPDATE `tbl_time` SET InvoiceID = ".$invoiceid." WHERE UserID = " . $userid . " AND TimeID IN (" . $timeids . ");";
   $mysqli->query($sql);
-  $mysqli->close();
 
-  $data = array("message" => $task, "sql" => $sql);
+  $sql2 = "UPDATE `tbl_invoices` SET HourDate = ".$invoicedate.", CustomerID = ".$customerid." WHERE UserID = " . $userid . " AND InvoiceID = ".$invoiceid;
+  $mysqli->query($sql2);
+
+  $data = array("sql" => $sql, "sql2" => $sql2);
   return json_encode($data);
 }
 
@@ -973,9 +975,15 @@ function loadAllInvoices($userid) {
 
   $sql = "
     SELECT
-      *
+      tbl_invoices.*,
+      Date_Format(tbl_invoices.HourDate,'%m/%d/%Y') AS HourDateConverted,
+      tbl_customers.CustomerID,
+      tbl_customers.CustomerName
     FROM tbl_invoices
-    WHERE UserID = '".$userid."'
+    LEFT JOIN tbl_customers
+      ON tbl_customers.CustomerID = tbl_invoices.CustomerID
+    WHERE tbl_invoices.UserID = '".$userid."'
+    ORDER BY tbl_invoices.HourDate DESC
     ";
 
   $mysqli = new mysqli(Database::dbserver, Database::dbuser, Database::dbpass, Database::dbname);
@@ -985,6 +993,8 @@ function loadAllInvoices($userid) {
     $dbdata = array(
       "InvoiceID" => $row['InvoiceID'],
       "InvoiceNumber" => $row['InvoiceNumber'],
+      "CustomerName" => $row['CustomerName'],
+      "InvoiceDateConverted" => $row['HourDateConverted'],
     );
 
     $data[] = $dbdata; //push our data into the $data object
@@ -1013,7 +1023,9 @@ function loadInvoice($userid, $invoiceid) {
       c.CustomerName,
       d.TimeID,
       Date_Format(d.HourDate,'%Y-%m-%d') AS HourDate,
-      d.Hours
+      Date_Format(d.HourDate,'%m/%d/%Y') AS HourDateConverted,
+      d.Hours,
+      d.InvoiceID
     FROM tbl_timesheet a
     LEFT JOIN tbl_services b
       ON b.ServiceID = a.ServiceID
@@ -1038,9 +1050,20 @@ function loadInvoice($userid, $invoiceid) {
       "CustomerID" => $row['CustomerID'],
       "Customer" => $row['CustomerName'],
       "TimeDate" => $row['HourDate'],
+      "TimeDateConverted" => $row['HourDateConverted'],
       "Hours" => $row['Hours'],
       "HourlyRate" => $row['HourlyRate'],
-      "InvoiceNumber" => NULL
+      "InvoiceID" => $row['InvoiceID']
+    );
+
+    $contactdata = array(
+      "Company" => "TODO",
+      "Phone" => "TODO",
+      "Address1" => "TODO",
+      "Address2" => "TODO",
+      "City" => "TODO",
+      "State" => "TODO",
+      "Zip" => "TODO"
     );
 
     $data[] = $dbdata; //push our data into the $data object
@@ -1049,7 +1072,7 @@ function loadInvoice($userid, $invoiceid) {
   $rs->free();
   $mysqli->close();
 
-  $data = array("success" => true, "records" => $data);
+  $data = array("success" => true, "records" => $data, "contactdata" => $contactdata);
   return json_encode($data);
 }
 

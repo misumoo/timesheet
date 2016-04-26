@@ -41,26 +41,6 @@ tsApp.controller('RegisterController', ['$scope', '$cookies', '$http', '$locatio
       });
     };
 
-    $scope.login = function() { //our submit button has been triggered -- form with ng-submit="login()"
-      //attempt to log in with username and email
-
-      $http.post(serviceBase, {
-        email: $scope.email,
-        password: $scope.password,
-        task: "login"
-      }).success(function(response) {
-        if(response.success == true) {
-          $cookies.usertoken = response.usertoken;
-          $cookies.userfirstname = response.userfirstname;
-          $location.path('/timesheet');
-        } else {
-          alert("Invalid username/password");
-        }
-      }).error(function() {
-        alert("Error reaching server");
-      });
-    }; //login
-
     $scope.register = function() { //our submit button has been triggered -- form with ng-submit="register()"
       $http.post(serviceBase, {
         firstname: $scope.firstname,

@@ -296,7 +296,11 @@ body {
 }
 
 .nl2brhtml {
-  white-space: pre;
+  white-space: pre-line;
+}
+
+.description {
+  max-width: 450px;
 }
 /******************************************************************/
 /**************************FANCY BUTTON****************************/
