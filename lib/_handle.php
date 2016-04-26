@@ -176,7 +176,7 @@ if($task == "addTask") {
 } //task addProject
 
 if($task == "getAllEntries") {
-  $billed = false;
+  $billed = $request->includebilled;
   $data = getAllEntries($userid, $billed);
   echo $data;
 } //task getAllEntries
@@ -922,7 +922,8 @@ function getAllEntries($userid, $billed) {
       d.TimeID,
       Date_Format(d.HourDate,'%Y-%m-%d') AS HourDate,
       Date_Format(d.HourDate,'%m/%d/%Y') AS HourDateConverted,
-      d.Hours
+      d.Hours,
+      e.InvoiceID
     FROM tbl_timesheet a
     LEFT JOIN tbl_services b
       ON b.ServiceID = a.ServiceID
@@ -930,11 +931,14 @@ function getAllEntries($userid, $billed) {
       ON c.CustomerID = a.CustomerID
     LEFT JOIN tbl_time d
       ON d.WeeklyID = a.WeeklyID
+    LEFT JOIN tbl_invoices e
+      ON e.InvoiceID = d.InvoiceID
     WHERE a.UserID = ".$userid."
   ";
 
-  $sql .= ($billed == false ? " AND InvoiceID IS NULL" : "");
+  $sql .= ($billed == false ? " AND d.InvoiceID IS NULL" : "");
   $sql .= " ORDER BY HourDate DESC";
+
 
   $mysqli = new mysqli(Database::dbserver, Database::dbuser, Database::dbpass, Database::dbname);
   $rs = $mysqli->query($sql);
@@ -953,6 +957,7 @@ function getAllEntries($userid, $billed) {
       "Hours" => $row['Hours'],
       "HourlyRate" => $row['HourlyRate'],
       "InvoiceNumber" => NULL,
+      "InvoiceID" => $row['InvoiceID'],
     );
 
     $data[] = $dbdata; //push our data into the $data object

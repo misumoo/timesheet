@@ -502,7 +502,8 @@ tsApp.controller('SheetController', [ '$scope', '$cookies', '$http', '$filter', 
 
       if(!cancelprocess) {
         $http.post(serviceBase, {
-          task: "getAllEntries"
+          task: "getAllEntries",
+          includebilled: $scope.includeBilled
         }).success(function(response) {
           $scope.trigger();
           if(response.message == "No userid or token") {
@@ -535,6 +536,7 @@ tsApp.controller('SheetController', [ '$scope', '$cookies', '$http', '$filter', 
     $scope.pagedItems = [];
     $scope.currentPage = 0;
     $scope.allEntries = "";
+    $scope.includeBilled = true;
 
     var searchMatch = function (haystack, needle) {
       if (!needle) {

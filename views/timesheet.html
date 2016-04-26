@@ -1,7 +1,7 @@
 <div class="mainsheet" ng-controller="SheetController" ng-init="setup()">
 
   <form name="timesheet">
-    <div class="inputwrapper" style="width: 100%;">
+    <div style="width: 100%;">
 
       <section style="margin: auto;">
         <div class="left">
@@ -87,8 +87,17 @@
               </div>
             </div>
           </div>
-          <div class="col-md-6">
+          <div class="col-md-2">
+            <h5>
+              <input ng-change="fetchAllTimes()" type="checkbox" ng-model="includeBilled" id="includeBilled">
+              <label for="includeBilled">Include Billed</label>
+            </h5>
+          </div>
+          <div class="col-md-2">
             <h5 class="text-center">All entries.</h5>
+          </div>
+          <div class="col-md-5">
+            <h5 class="text-center"></h5>
           </div>
         </div>
 
@@ -102,7 +111,7 @@
                 <th class="Service pointer col-xs-2 datadisplayellipsis"><a ng-click="sort_by('Service')">Service <i class="fa fa-sort"></i></a></th>
                 <th class="Description col-xs-3 datadisplayellipsis" title="non-sortable">Description</th>
                 <th class="Hours pointer col-xs-1 datadisplayellipsis"><a ng-click="sort_by('Hours')">Hours <i class="fa fa-sort"></i></a></th>
-                <th class="InvoiceNumber pointer col-xs-1 datadisplayellipsis"><a ng-click="sort_by('InvoiceNumber')">Invoice# <i class="fa fa-sort"></i></a></th>
+                <th class="InvoiceID pointer col-xs-1 datadisplayellipsis"><a ng-click="sort_by('InvoiceID')">Invoice# <i class="fa fa-sort"></i></a></th>
                 <th class="col-xs-1"></th>
               </tr>
             </thead>
@@ -114,7 +123,7 @@
                 <td>{{data.Service}}</td>
                 <td class="description">{{data.Description}}</td>
                 <td>{{data.Hours}}</td>
-                <td>{{data.InvoiceNumber}}</td>
+                <td>{{data.InvoiceID}}</td>
                 <td><button class="tsbutton" ng-click="deleteItem($index)" title="Delete" name="delete"><i class="fa fa-trash"></i></button><a class="pointer tsbutton"></a></td>
               </tr>
             </tbody>

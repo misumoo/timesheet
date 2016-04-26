@@ -258,7 +258,8 @@ tsApp.controller('InvoiceController', [ '$scope', '$cookies', '$http', '$filter'
 
       if(!cancelprocess) {
         $http.post(serviceBase, {
-          task: "getAllEntries"
+          task: "getAllEntries",
+          includebilled: false
         }).success(function(response) {
           $scope.trigger();
           if(response.message == "No userid or token") {
