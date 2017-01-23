@@ -168,12 +168,12 @@ if($task == "lookupService") {
 
 if($task == "getTasks") {
   echo getTasks();
-} //task getTimes
+} //task getTasks
 
 if($task == "addTask") {
   $description = $request->taskdescription;
   echo addTask($description);
-} //task addProject
+} //task addTask
 
 if($task == "getAllEntries") {
   $billed = $request->includebilled;
@@ -463,32 +463,36 @@ function resetInit($email) {
     </html>
   ';
 
-  $mail = new PHPMailer;
-//  $mail->SMTPDebug = 3;                  // Enable verbose debug output
-//  $mail->SMTPDebug = 1;
+  try{
 
-  $mail->isSMTP();                         // Set mailer to use SMTP
-//  $mail->Mailer = 'smtp';
-//  $mail->Host = 'smtp.gmail.com';        // Specify main and backup SMTP servers
-//  $mail->SMTPAuth = true;                // Enable SMTP authentication
-//  $mail->Username = Email::USER_NAME;    // SMTP username
-//  $mail->Password = Email::PASSWORD;     // SMTP password
-//  $mail->SMTPSecure = 'tls';             // Enable TLS encryption, `ssl` also accepted
-//  $mail->Port = 587;                     // TCP port to connect to
+    $mail = new PHPMailer;
+    $mail->SMTPDebug = 3;                  // Enable verbose debug output
+  //  $mail->SMTPDebug = 1;
 
-  $mail->SetFrom(Email::USER_NAME, 'Timesheet');
+    $mail->isSMTP();                         // Set mailer to use SMTP
+  //  $mail->Mailer = 'smtp';
+    $mail->SMTPAuth = true;                // Enable SMTP authentication
+    $mail->SMTPSecure = 'tls';             // Enable TLS encryption, `ssl` also accepted
+    $mail->Host = 'smtp.gmail.com';        // Specify main and backup SMTP servers17.
+    $mail->Port = 587;                     // set the SMTP port for the GMAIL
+    $mail->Username = Email::USER_NAME;    // SMTP username
+    $mail->Password = Email::PASSWORD;     // SMTP password
 
-  $mail->From = Email::USER_NAME;
-  $mail->FromName = 'Timesheet';
+    $mail->SetFrom(Email::USER_NAME, 'Timesheet');
 
-  $mail->addAddress($useremail, '');        // Add a recipient
-  $mail->Subject  = $mailsubject;
-  $mail->Body     = $mailbody;
-  $mail->AltBody  = 'Please use a service that will view emails as HTML.';
+    $mail->addAddress($useremail, '');        // Add a recipient
+    $mail->Subject  = $mailsubject;
+    $mail->Body     = $mailbody;
+    $mail->AltBody  = 'Please use a service that will view emails as HTML.';
 
-  if(!$mail->send()) {
-    $success = false;
-    $msg = $mail->ErrorInfo;
+    if(!$mail->send()) {
+      $success = false;
+      $msg = $mail->ErrorInfo;
+    }
+  } catch (phpmailerException $e) {
+    echo $e->errorMessage(); //Pretty error messages from PHPMailer
+  } catch (Exception $e) {
+    echo $e->getMessage(); //Boring error messages from anything else!
   }
 
   $data =  array("success" => $success, "message" => $msg);
@@ -824,6 +828,7 @@ function getTimes($userid, $date) {
   $data = "";
   $currentrecord = "";
   $dbdata = "";
+  $day = "";
 
   $m = date('Y-m-d',strtotime($date));
   $tu = date('Y-m-d',strtotime($date . "+1 days"));
@@ -1223,7 +1228,9 @@ function generateToken($userid) {
  * Converts a string for insert. Escapes it, puts quotes around it. Nulls if it is nothing.
  */
 function convertForInsert($str) {
-  //to use real_escape_string, we have to make a database connection
+  /**
+   * To use real_escape_string, we have to make a database connection.
+   */
   $mysqli = new mysqli(Database::dbserver, Database::dbuser, Database::dbpass, Database::dbname);
 
   if ($str != "") {
@@ -1231,6 +1238,7 @@ function convertForInsert($str) {
   } else {
     $str = "NULL";
   }
+
   return $str;
 } //convertForInsert
 

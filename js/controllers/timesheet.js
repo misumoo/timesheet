@@ -515,10 +515,12 @@ tsApp.controller('SheetController', [ '$scope', '$cookies', '$http', '$filter', 
           if(response.success) {
             if(response.records != "") {
               $scope.allEntries = response.records;
+              //console.log($scope.allEntries);
               //This is already thrown a filter as all of that is preprocessed, so this will reset the search allowing all records to display.
               $scope.search();
             } else {
               $scope.allEntries = "";
+              //console.log($scope.allEntries);
             }
           }
         }).error(function() {
