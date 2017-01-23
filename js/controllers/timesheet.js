@@ -515,13 +515,11 @@ tsApp.controller('SheetController', [ '$scope', '$cookies', '$http', '$filter', 
           if(response.success) {
             if(response.records != "") {
               $scope.allEntries = response.records;
-              //console.log($scope.allEntries);
               //This is already thrown a filter as all of that is preprocessed, so this will reset the search allowing all records to display.
-              $scope.search();
             } else {
               $scope.allEntries = "";
-              //console.log($scope.allEntries);
             }
+            $scope.search();
           }
         }).error(function() {
           alert("Error retrieving records");
@@ -554,6 +552,7 @@ tsApp.controller('SheetController', [ '$scope', '$cookies', '$http', '$filter', 
           //our item attr is going to be our value
           //if it is null, this will throw an error. wrapped in a try catch to silently fail.
           try{
+            console.log(item[attr] + "   " + $scope.query);
             if (searchMatch(item[attr], $scope.query)){
               return true;
             }
