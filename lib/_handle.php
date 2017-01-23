@@ -904,6 +904,7 @@ function getTimes($userid, $date) {
 
 /**
  * @param $userid
+ * @param $billed
  * @return object
  * This will return all of a users time entries.
  */
@@ -936,6 +937,7 @@ function getAllEntries($userid, $billed) {
     WHERE a.UserID = ".$userid."
   ";
 
+  //we are excluding already billed items
   $sql .= ($billed == false ? " AND d.InvoiceID IS NULL" : "");
   $sql .= " ORDER BY HourDate DESC";
 
@@ -1012,6 +1014,12 @@ function loadAllInvoices($userid) {
   return json_encode($data);
 }
 
+/**
+ * @param $userid
+ * @param $invoiceid
+ * @return object
+ * Load a users invoice based on $invoiceid
+ */
 function loadInvoice($userid, $invoiceid) {
   $data = "";
   $userid = convertForInsert($userid);
@@ -1215,6 +1223,7 @@ function generateToken($userid) {
  * Converts a string for insert. Escapes it, puts quotes around it. Nulls if it is nothing.
  */
 function convertForInsert($str) {
+  //to use real_escape_string, we have to make a database connection
   $mysqli = new mysqli(Database::dbserver, Database::dbuser, Database::dbpass, Database::dbname);
 
   if ($str != "") {
@@ -1297,7 +1306,7 @@ function addTask($description) {
 /**
  * @param $userid
  * @return object
- *
+ * Generate an invoice id.
  */
 function generateInvoiceNumber($userid) {
   $userid = convertForInsert($userid);
