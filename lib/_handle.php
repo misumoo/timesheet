@@ -15,6 +15,7 @@ class userInfo {
 
 require 'class.Database.php';
 require 'class.Email.php';
+require 'class.Customer.php';
 require 'phpmailer/PHPMailerAutoload.php';
 
 (isset($_COOKIE['usertoken']) ? $usertoken = $_COOKIE['usertoken'] : $usertoken = "");
@@ -40,6 +41,30 @@ if(!$userid || $usertoken == "") { // no id is bound to this token
 if($task == "getCustomers") {
   echo getCustomers($userid);
 } //task getCustomers
+
+if($task == "getAllCustomers") {
+  $data = getAllCustomers($userid);
+  echo $data;
+} //task getAllCustomers
+
+if($task == "getSingleCustomerFull") {
+  $customerid = $request->customerid;
+  $data = getSingleCustomerFull($userid, $customerid);
+  echo $data;
+}
+
+if($task == "updateCustomer") {
+  $customerid = $request->customerid;
+  $customername = $request->customername;
+  $addr1 = $request->addr1;
+  $addr2 = $request->addr2;
+  $city = $request->city;
+  $state = $request->state;
+  $zip = $request->zip;
+  $phone = $request->phone;
+  $data = updateCustomer($userid, $customerid, $customername, $addr1, $addr2, $city, $state, $zip, $phone);
+  echo $data;
+}
 
 if($task == "addCustomer") {
   $customername = $request->customername;
@@ -117,7 +142,7 @@ if($task == "resetDo") {
   $password = $request->password;
   $data = resetDo($email, $confirmationcode, $password);
   echo $data;
-} //task resetInit
+} //task resetDo
 
 if($task == "saveSingle") {
   $amount = $request->amount;
@@ -212,7 +237,7 @@ if($task == "loadInvoice") {
 /**
  * @param $userid
  * @param $service
- * @return object
+ * @return string
  * Look up a service id by name.
  */
 function lookupService($userid, $service) {
@@ -909,6 +934,93 @@ function getTimes($userid, $date) {
 
 /**
  * @param $userid
+ * @return object
+ */
+function getAllCustomers($userid) {
+  $data = "";
+
+  $sql = "
+    SELECT
+      CustomerID,
+      CustomerName
+    FROM tbl_customers
+    WHERE UserID = ".$userid."
+  ";
+
+  $mysqli = new mysqli(Database::dbserver, Database::dbuser, Database::dbpass, Database::dbname);
+  $rs = $mysqli->query($sql);
+
+  while($row = $rs->fetch_assoc()) {
+    $dbdata = array(
+      "CustomerID" => $row['CustomerID'],
+      "CustomerName" => $row['CustomerName']
+    );
+
+    $data[] = $dbdata; //push our data into the $data object
+  }
+
+  $rs->free();
+  $mysqli->close();
+
+  $data = array("success" => true, "records" => $data);
+  return json_encode($data);
+} //getAllCustomers
+
+/**
+ * @param $userid
+ * @param $customerid
+ * @return object
+ */
+function getSingleCustomerFull($userid, $customerid) {
+  $customer = new Customer();
+  $customer->getCustomerByID($customerid, $userid);
+
+  $data = array(
+    "CustomerID" => $customer->CustomerID,
+    "CustomerName" => $customer->CustomerName,
+    "Addr1" => $customer->Addr1,
+    "Addr2" => $customer->Addr2,
+    "City" => $customer->City,
+    "State" => $customer->State,
+    "Zip" => $customer->Zip,
+    "Phone" => $customer->Phone
+  );
+
+  $data = array("success" => true, "records" => $data);
+  return json_encode($data);
+} //getSingleCustomerFull
+
+/**
+ * @param $userid
+ * @param $customerid
+ * @param $customername
+ * @param $addr1
+ * @param $addr2
+ * @param $city
+ * @param $state
+ * @param $zip
+ * @param $phone
+ * @return object
+ */
+function updateCustomer($userid, $customerid, $customername, $addr1, $addr2, $city, $state, $zip, $phone) {
+  $customer = new Customer();
+  $customer->UserID = $userid;
+  $customer->CustomerID = $customerid;
+  $customer->CustomerName = $customername;
+  $customer->Addr1 = $addr1;
+  $customer->Addr2 = $addr2;
+  $customer->City = $city;
+  $customer->State = $state;
+  $customer->Zip = $zip;
+  $customer->Phone = $phone;
+  $customer->updateCustomer();
+
+  $data = array("success" => true);
+  return json_encode($data);
+} //updateCustomer
+
+/**
+ * @param $userid
  * @param $billed
  * @return object
  * This will return all of a users time entries.
@@ -975,7 +1087,7 @@ function getAllEntries($userid, $billed) {
 
   $data = array("success" => true, "records" => $data);
   return json_encode($data);
-}
+} //getAllEntries
 
 /**
  * @param $userid
@@ -1027,6 +1139,7 @@ function loadAllInvoices($userid) {
  */
 function loadInvoice($userid, $invoiceid) {
   $data = "";
+  $customerdata = "";
   $userid = convertForInsert($userid);
   $invoiceid = convertForInsert($invoiceid);
 
@@ -1074,14 +1187,18 @@ function loadInvoice($userid, $invoiceid) {
       "InvoiceID" => $row['InvoiceID']
     );
 
-    $contactdata = array(
-      "Company" => "TODO",
-      "Phone" => "TODO",
-      "Address1" => "TODO",
-      "Address2" => "TODO",
-      "City" => "TODO",
-      "State" => "TODO",
-      "Zip" => "TODO"
+    $customer = new Customer();
+    $customer->getCustomerByID($row['CustomerID'], $userid);
+
+    $customerdata = array(
+      "CustomerID" => $customer->CustomerID,
+      "CustomerName" => $customer->CustomerName,
+      "Addr1" => $customer->Addr1,
+      "Addr2" => $customer->Addr2,
+      "City" => $customer->City,
+      "State" => $customer->State,
+      "Zip" => $customer->Zip,
+      "Phone" => $customer->Phone
     );
 
     $data[] = $dbdata; //push our data into the $data object
@@ -1090,7 +1207,7 @@ function loadInvoice($userid, $invoiceid) {
   $rs->free();
   $mysqli->close();
 
-  $data = array("success" => true, "records" => $data, "contactdata" => $contactdata);
+  $data = array("success" => true, "records" => $data, "customer" => $customerdata);
   return json_encode($data);
 }
 
@@ -1327,7 +1444,7 @@ function generateInvoiceNumber($userid) {
 
   $mysqli->close();
 
-  $data = array("success" => true, "invoiceid" => $insertid);
+  $data = array("success" => true, "invoiceid" => $insertid, "sql" => $sql);
   return json_encode($data);
 }
 

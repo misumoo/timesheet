@@ -36,6 +36,10 @@ tsApp.config(['$routeProvider', function($routeProvider) {
       templateUrl: 'views/invoice.html',
       controller: 'InvoiceController'
     }).
+    when('/customer', {
+      templateUrl: 'views/customer.html',
+      controller: 'CustomerController'
+    }).
     when('/invoice/:invoiceid', {
       templateUrl: 'views/invoice.html',
       controller: 'InvoiceController'
@@ -55,7 +59,6 @@ tsApp.controller('HeaderController', [ '$scope', '$cookies', '$http', '$location
     };
 
     $scope.setupCookies = function() {
-      console.log($scope.loggedin);
       if($cookies.userfirstname != "" && $cookies.userfirstname !== undefined) {
         $scope.loggedin = true;
         $scope.username = $cookies.userfirstname;

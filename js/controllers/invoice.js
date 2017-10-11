@@ -23,13 +23,15 @@ tsApp.controller('InvoiceController', [ '$scope', '$cookies', '$http', '$filter'
     $scope.today = ($filter('date')(new Date(), 'MM/dd/yyyy'));
     $scope.todayformatted = ($filter('date')(new Date(), 'yyyy-MM-dd'));
     $scope.invoicetotal = "TODO";
-    $scope.Company = "Company/person name";
-    $scope.Phone = "(123) 456-7890";
-    $scope.Address1 = "Address1";
-    $scope.Address2 = "Address2";
-    $scope.City = "City";
-    $scope.State = "State";
-    $scope.Zip = "Zip";
+
+    //TODO: Chris - Add functionality to this. Personal information
+    $scope.Company = "";
+    $scope.Phone = "";
+    $scope.Address1 = "";
+    $scope.Address2 = "";
+    $scope.City = "";
+    $scope.State = "";
+    $scope.Zip = "";
 
     $scope.setup = function() {
       $scope.fetchAllTimes();
@@ -115,6 +117,8 @@ tsApp.controller('InvoiceController', [ '$scope', '$cookies', '$http', '$filter'
             $scope.invoiceid = "";
           }
         }
+
+        console.log(response.sql);
 
         $scope.saveInvoice();
         $scope.loadAllInvoices();
@@ -297,13 +301,13 @@ tsApp.controller('InvoiceController', [ '$scope', '$cookies', '$http', '$filter'
         if(response.success) {
           if(response.records != "") {
             $scope.invoicelist = response.records;
-            $scope.toCompany = response.contactdata.Company;
-            $scope.toPhone = response.contactdata.Phone;
-            $scope.toAddress1 = response.contactdata.Address1;
-            $scope.toAddress2 = response.contactdata.Address2;
-            $scope.toCity = response.contactdata.City;
-            $scope.toState = response.contactdata.State;
-            $scope.toZip = response.contactdata.Zip;
+            $scope.toCompany = response.customer.CustomerName;
+            $scope.toPhone = response.customer.Phone;
+            $scope.toAddress1 = response.customer.Addr1;
+            $scope.toAddress2 = response.customer.Addr2;
+            $scope.toCity = response.customer.City;
+            $scope.toState = response.customer.State;
+            $scope.toZip = response.customer.Zip;
           } else {
             $scope.invoicelist = "";
             $scope.resetClientData();

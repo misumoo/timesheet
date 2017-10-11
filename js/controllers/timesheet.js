@@ -552,7 +552,6 @@ tsApp.controller('SheetController', [ '$scope', '$cookies', '$http', '$filter', 
           //our item attr is going to be our value
           //if it is null, this will throw an error. wrapped in a try catch to silently fail.
           try{
-            console.log(item[attr] + "   " + $scope.query);
             if (searchMatch(item[attr], $scope.query)){
               return true;
             }
