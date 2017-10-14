@@ -976,14 +976,14 @@ function getSingleCustomerFull($userid, $customerid) {
   $customer->getCustomerByID($customerid, $userid);
 
   $data = array(
-    "CustomerID" => $customer->CustomerID,
-    "CustomerName" => $customer->CustomerName,
-    "Addr1" => $customer->Addr1,
-    "Addr2" => $customer->Addr2,
-    "City" => $customer->City,
-    "State" => $customer->State,
-    "Zip" => $customer->Zip,
-    "Phone" => $customer->Phone
+    "CustomerID" => $customer->getCustomerID(),
+    "CustomerName" => $customer->getCustomerName(),
+    "Addr1" => $customer->getAddr(),
+    "Addr2" => $customer->getAddr2(),
+    "City" => $customer->getCity(),
+    "State" => $customer->getState(),
+    "Zip" => $customer->getZip(),
+    "Phone" => $customer->getPhone()
   );
 
   $data = array("success" => true, "records" => $data);
@@ -1004,15 +1004,15 @@ function getSingleCustomerFull($userid, $customerid) {
  */
 function updateCustomer($userid, $customerid, $customername, $addr1, $addr2, $city, $state, $zip, $phone) {
   $customer = new Customer();
-  $customer->UserID = $userid;
-  $customer->CustomerID = $customerid;
-  $customer->CustomerName = $customername;
-  $customer->Addr1 = $addr1;
-  $customer->Addr2 = $addr2;
-  $customer->City = $city;
-  $customer->State = $state;
-  $customer->Zip = $zip;
-  $customer->Phone = $phone;
+  $customer->setUserID($userid);
+  $customer->setCustomerID($customerid);
+  $customer->setCustomerName($customername);
+  $customer->setAddr($addr1);
+  $customer->setAddr2($addr2);
+  $customer->setCity($city);
+  $customer->setState($state);
+  $customer->setZip($zip);
+  $customer->setPhone($phone);
   $customer->updateCustomer();
 
   $data = array("success" => true);
@@ -1190,16 +1190,16 @@ function loadInvoice($userid, $invoiceid) {
     $customer = new Customer();
     $customer->getCustomerByID($row['CustomerID'], $userid);
 
-    $customerdata = array(
-      "CustomerID" => $customer->CustomerID,
-      "CustomerName" => $customer->CustomerName,
-      "Addr1" => $customer->Addr1,
-      "Addr2" => $customer->Addr2,
-      "City" => $customer->City,
-      "State" => $customer->State,
-      "Zip" => $customer->Zip,
-      "Phone" => $customer->Phone
-    );
+    $customerdata = [
+      "CustomerID" => $customer->getCustomerID(),
+      "CustomerName" => $customer->getCustomerName(),
+      "Addr1" => $customer->getAddr(),
+      "Addr2" => $customer->getAddr(),
+      "City" => $customer->getCity(),
+      "State" => $customer->getState(),
+      "Zip" => $customer->getZip(),
+      "Phone" => $customer->getPhone()
+    ];
 
     $data[] = $dbdata; //push our data into the $data object
   }

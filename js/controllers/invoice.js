@@ -33,6 +33,8 @@ tsApp.controller('InvoiceController', [ '$scope', '$cookies', '$http', '$filter'
     $scope.State = "";
     $scope.Zip = "";
 
+    $scope.logo = "";
+
     $scope.setup = function() {
       $scope.fetchAllTimes();
       $scope.setModalButton();
